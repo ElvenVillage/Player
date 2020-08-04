@@ -49,7 +49,6 @@ export const WelcomePage = () => {
     const { fileName } = useStoreState(state => state.file);
     const { classes } = useStoreState(state => state.classes);
     const { boats } = useStoreState(state => state.boats);
-    const { mode } = useStoreState(state => state.mode);
     const { url } = useStoreState(state => state.url);
     const history = useHistory()
     const [name, setName] = useState("");
