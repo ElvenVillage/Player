@@ -1,27 +1,11 @@
-import React, {
-  useState,
-  useEffect,
-  useRef
-} from 'react';
-import {
-  Map,
-  Marker,
-  TileLayer,
-  Polyline,
-  ScaleControl,
-} from 'react-leaflet';
-import {
-  useStoreState,
-  useStoreActions
-} from 'easy-peasy';
-import { useInterval, calculateAngle } from '../../misc/handlers';
-import Wind from './wind';
-import North from './north';
-import Player from './player';
-import {
-  CustomMarker,
-  PinIcon,
-} from '../../misc/graphics';
+import React, { useState, useEffect, useRef } from 'react'
+import { Map, Marker, TileLayer, Polyline, ScaleControl } from 'react-leaflet'
+import { useStoreState, useStoreActions } from 'easy-peasy'
+import { useInterval, calculateAngle } from '../../misc/handlers'
+import Wind from './wind'
+import North from './north'
+import Player from './player'
+import { CustomMarker, PinIcon } from '../../misc/graphics';
 
 export const MapContainer = ({center, setCenter}) => {
   const { endTime, currentTime } = useStoreState(state => state.player);
@@ -45,7 +29,7 @@ export const MapContainer = ({center, setCenter}) => {
       setAvgWindDirection();
     }
     updateDivs();
-  }, []);
+  }, boats);
 
   useEffect(() => {
     updateDivs();

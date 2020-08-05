@@ -9,7 +9,6 @@ import {
   useStoreActions,
   useStoreState
 } from 'easy-peasy';
-import {Link} from 'react-router-dom'
 
 export const TopBar = () => {
   const { clearFileState } = useStoreActions(actions => actions.file);
@@ -29,14 +28,11 @@ export const TopBar = () => {
     <React.Fragment>
       <AppBar color="primary" position="relative">
         <Toolbar>
-          <Button component={Link} to="/"
-              onClick={handleGoMainMenu}
-          >
+          <Button onClick={handleGoMainMenu}>
             <Typography
               className={classes.appBarText}
               variant="h6"
-              noWrap
-            >
+              noWrap>
               Map Tool
             </Typography>
             </Button>

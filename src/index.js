@@ -1,23 +1,23 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 import { 
     createStore,
     StoreProvider
-} from 'easy-peasy';
+} from 'easy-peasy'
 
-import App from './components/app';
-import model from './model';
-import './styles/index.css';
+import App from './components/app'
+import model from './model'
+import './styles/index.css'
 
-const store = createStore(model);
+const store = createStore(model)
 
 function Root() {
     return (
         <StoreProvider store={store}>
             <App />
         </StoreProvider>
-    );
+    )
 }
 
-const rootElement = document.getElementById('root');
-ReactDOM.render(<Root />, rootElement);
+const rootElement = document.getElementById('root')
+ReactDOM.render(<Root />, rootElement)

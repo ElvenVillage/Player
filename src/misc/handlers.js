@@ -21,6 +21,7 @@ const processData = (file, callback) => {
         {
             skipEmptyLines: true,
             header: true,
+            download: true,
             dynamicTyping: true,
             fastMode: true,
             complete: (data) =>
