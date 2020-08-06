@@ -5,6 +5,7 @@ import {
 import Download from './download';
 import AddFile from './addfile';
 import AddPins from './addpins';
+import AddUriLog from "./addUrlLog";
 
 const FabWrapper = () => {
     const { classes } = useStoreState(state => state.classes);
@@ -12,6 +13,7 @@ const FabWrapper = () => {
     <div className={classes.fabWrapper}>
         <AddPins />
         <AddFile />
+        <AddUriLog />
         <Download />
     </div>
     );

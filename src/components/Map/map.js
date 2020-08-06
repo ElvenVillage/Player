@@ -29,7 +29,7 @@ export const MapContainer = ({center, setCenter}) => {
       setAvgWindDirection();
     }
     updateDivs();
-  }, boats);
+  }, []);
 
   useEffect(() => {
     updateDivs();

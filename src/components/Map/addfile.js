@@ -1,53 +1,46 @@
-import React, {
-  useRef,
-  useState
-} from 'react';
-import {
-  useStoreState
-} from 'easy-peasy';
-import AddIcon from '@material-ui/icons/Add';
-import {
-  Fab,
-} from '@material-ui/core';
-import { handleProcessData } from '../../misc/handlers';
+import React, {useRef, useState} from 'react'
+import { useStoreState } from 'easy-peasy'
+import AddIcon from '@material-ui/icons/Add'
+import { Fab } from '@material-ui/core'
+import { handleProcessData } from '../../misc/handlers'
 
-import ShowError from '../../misc/showerror';
-import AddBoat from '../../misc/addboat';
+import ShowError from '../../misc/showerror'
+import AddBoat from '../../misc/addboat'
 
 export const AddFile = () => {
-  const { classes } = useStoreState(state => state.classes);
-  const inputFile = useRef(null);
-  const [open, setOpen] = useState(false);
-  const [errorFile, setErrorFile] = useState(false);
-  const [data, setData] = useState(null);
+  const { classes } = useStoreState(state => state.classes)
+  const inputFile = useRef(null)
+  const [open, setOpen] = useState(false)
+  const [errorFile, setErrorFile] = useState(false)
+  const [data, setData] = useState(null)
   
   const cleanState = () => {
-    setOpen(false);
-    setErrorFile(false);
-    setData(null);
+    setOpen(false)
+    setErrorFile(false)
+    setData(null)
   }
   const handleClick = () => {
-    cleanState();
-    inputFile.current.click();
+    cleanState()
+    inputFile.current.click()
   }
 
   const handleChange = (e) => {
-    const [file] = e.target.files;
-    handleProcessData(file, handleGetData);
+    const [file] = e.target.files
+    handleProcessData(file, handleGetData)
   }
-  
+
   const handleGetData = (data) => {
     if (!data) {
-      setErrorFile(true);
+      setErrorFile(true)
       return;
     }
-    setOpen(true);
+    setOpen(true)
     setData(data);
   }
 
   return (
   <>
-  <AddBoat open={open} setOpen={setOpen} data={data} />
+  <AddBoat open={open} setOpen={setOpen} data={data}  url={false} setData={setData} />
   <ShowError showError={errorFile} setShowError={setErrorFile} />
   <input
       id="input-file"
@@ -68,7 +61,7 @@ export const AddFile = () => {
     Добавить файл
   </Fab>
   </>
-  );
+  )
 }
 
-export default AddFile;
+export default AddFile

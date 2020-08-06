@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Boats from './boats'
 import Map from './map'
 import FabWrapper from './fabwrapper'
@@ -16,21 +16,6 @@ export const MapPage = () => {
     const { setPlayer, clearPlayerState } = useStoreActions(actions => actions.player)
     const [checked, setChecked] = useState(false)
     const [center, setCenter] = useState([0, 0])
-
-    const handleSetState = (data) => {
-        if (!data) {
-            setLoading(false)
-            setShowError(true)
-            return
-        }
-        console.log(data)
-        setupBoat(data.obj)
-        setHeaders(data.headers)
-        setPlayer(data.player)
-    }
-
-    console.log('wut')
-    handleProcessData('http://127.0.0.1:8080/', handleSetState)
 
     const handleCheckbox = () => setChecked(!checked)
 
