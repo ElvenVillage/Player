@@ -28,25 +28,25 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
     const [text, setText] = useState("")
 
     const cleanState = () => {
-        setOpen(false);
-        setColor("#000");
-        setError("");
-        setVisible(false);
-        setText("");
+        setOpen(false)
+        setColor("#000")
+        setError("")
+        setVisible(false)
+        setText("")
     }
 
     const handleClose = () => {
-        cleanState();
+        cleanState()
     }
 
     function setNewBoat(data) {
         setHeaders(data.headers)
-        const {obj, player} = data;
-        obj.name = text;
-        obj.color = color;
-        setupBoat(obj);
-        updatePlayer(player);
-        cleanState();
+        const {obj, player} = data
+        obj.name = text
+        obj.color = color
+        setupBoat(obj)
+        updatePlayer(player)
+        cleanState()
     }
 
     const handleConfirmation = () => {
@@ -59,16 +59,18 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
                 setNewBoat(data)
             }
         } else {
+
             handleProcessData('http://127.0.0.1:8080/', (data) => {
                 if (data) setNewBoat(data)
             })
+
         }
     }
 
 
     const handleColor = (color) => {
-        if (!color) return;
-        setColor(color.hex);
+        if (!color) return
+        setColor(color.hex)
     }
 
     return (
@@ -134,4 +136,4 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
     )
 }
 
-export default AddBoat;
+export default AddBoat
