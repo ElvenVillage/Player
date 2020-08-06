@@ -1,12 +1,9 @@
-# To serve project:
+# Запуск фронтенда:
 ```
-npm install -g serve
-serve -s build
+npm run start
 ```
-# To adjust port:
-Use the -l flag like this:
+# Запуск тестового сервера
 ```
-serve -s build -l 4000
+npm run serv
 ```
-See more here:
-https://create-react-app.dev/docs/deployment/
+Тестовый сервер отдает csv с порта 8080
