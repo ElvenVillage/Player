@@ -11,7 +11,7 @@ const FabWrapper = () => {
     const { classes } = useStoreState(state => state.classes);
     return (
     <div className={classes.fabWrapper}>
-        <AddPins />
+        //<AddPins />
         <AddFile />
         <AddUriLog />
         <Download />
