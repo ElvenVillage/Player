@@ -20,6 +20,11 @@ export const MapContainer = ({center, setCenter}) => {
   const [avgWind, setAvgWind] = useState(-1);
   const mapRef = useRef(null);
 
+  //////заготовленные координаты буев:
+  const masslat = [59.939095,58.939095,59.939095]
+  const masslng = [30.315868,30.315868,30.315868]
+
+ ///////
   const handleShowPlayer = (status) => setVisible(status);
 
   useEffect(() => {
@@ -163,7 +168,24 @@ export const MapContainer = ({center, setCenter}) => {
     const clickedCoords = [latlng.lat, latlng.lng];
     setStartLine(clickedCoords);
   }
+  /////////Добалвение буев заранее заданных
+  const OnCreateSetBuiCoords= (masslat, masslng) => {
+    for (var i=0; i<masslat.length ; i++){
+      console.log("sdfsdfdfdfd")
+      console.log(masslat[i], masslng[i])
+      setStartLine([masslat[i], masslng[i]]);
+      }
 
+  }
+  const OnCreateSetBuiTitle= (id) => {
+    if(id==0){
+      return ('port');
+    }
+    if(id==1){
+      return ('starboard');
+    }
+  }
+  ////////
   const handleDragEnd = (e) => {
     const { id } = e.target.options;
     const latlng = e.target.getLatLng();
@@ -183,6 +205,7 @@ export const MapContainer = ({center, setCenter}) => {
         draggable={true}
         key={`marker-${idx}`}
         icon={PinIcon}
+        title={OnCreateSetBuiTitle(idx)}
       />
       ))}
       <Polyline className={classes.polyline} color={'black'} positions={startLine} />
@@ -211,6 +234,7 @@ export const MapContainer = ({center, setCenter}) => {
         easeLinearity={0.35}
         ref={mapRef}
         onClick={handleClick}
+        load={OnCreateSetBuiCoords(masslat, masslng)}
       >
         {markers}
         <TileLayer
