@@ -88,8 +88,8 @@ form {
 
 .tabs__list {
   -webkit-box-flex: 0;
-  -ms-flex: 0 1 20%;
-  flex: 0 1 20%;
+  -ms-flex: 0 1 30%;
+  flex: 0 1 30%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -133,8 +133,8 @@ form {
 
 .tabs-input {
   -webkit-box-flex: 1;
-  -ms-flex: 1 1 80%;
-  flex: 1 1 80%; }
+  -ms-flex: 1 1 70%;
+  flex: 1 1 70%; }
 
 .tabs-input__item {
   font-size: 1.2em;
