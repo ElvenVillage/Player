@@ -61,6 +61,15 @@ all.forEach(input => {
         if (targetMarker.options) {
             targetMarker.setLatLng(L.latLng(e.target.value, targetMarker.getLatLng()[targetType]))
         } else {
+            const latlng = (targetType === 'lat')? L.latLng(e.target.value, 0) : L.latLng(0, e.target.value)
+
+            markers[modes[currentMode] + 'Marker'] = L.marker(latlng, {
+                title: modes[currentMode],
+                draggable: true
+            })
+                .addTo(map)
+                .bindPopup(modes[currentMode])
+                .on('drag', updateDrag(currentMode))
 
         }
     })
