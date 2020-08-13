@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useCallback} from 'react'
 import {
     Fab,
     Dialog,
@@ -49,7 +49,7 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
         cleanState()
     }
 
-    const handleConfirmation = () => {
+    const handleConfirmation = useCallback(() => {
         if (!text) {
             setError("Задайте имя лодке");
             return;
@@ -60,12 +60,12 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
             }
         } else {
 
-            handleProcessData('http://127.0.0.1:8080/', (data) => {
+            handleProcessData(urlString, (data) => {
                 if (data) setNewBoat(data)
             })
 
         }
-    }
+    }, [text, urlString, data])
 
 
     const handleColor = (color) => {

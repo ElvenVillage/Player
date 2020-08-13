@@ -3,17 +3,11 @@ import Boats from './boats'
 import Map from './map'
 import FabWrapper from './fabwrapper'
 import { Container, Fade, Paper, Grid, Typography, Checkbox } from '@material-ui/core'
-import {useStoreActions, useStoreState} from 'easy-peasy'
-import { handleProcessData } from "../../misc/handlers";
+import { useStoreState } from 'easy-peasy'
 
 export const MapPage = () => {
 
-    const { setFileName, setHeaders, clearFileState } = useStoreActions(actions => actions.file)
     const {classes} = useStoreState(state => state.classes)
-    const [loading, setLoading] = useState(false)
-    const [showError, setShowError] = useState(false)
-    const { setupBoat, clearBoatsState } = useStoreActions(actions => actions.boats)
-    const { setPlayer, clearPlayerState } = useStoreActions(actions => actions.player)
     const [checked, setChecked] = useState(false)
     const [center, setCenter] = useState([0, 0])
 
