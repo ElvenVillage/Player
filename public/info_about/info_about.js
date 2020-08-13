@@ -6,7 +6,7 @@ let currentMode = 0
 const lats = modes.map(mode => document.getElementById(mode + 'Lat'))
 const langs = modes.map(mode => document.getElementById(mode + 'Lang'))
 
-const all = [lats, langs]
+const all = [...lats, ...langs]
 const map = L.map('mapid').setView([59.939095, 30.315868], 13)
 
 const markers = {
@@ -41,6 +41,34 @@ const updateDrag = (currentMode) => {
     }
 }
 
+const getMarker = (target) => {
+    const type = modes.filter(mode => target.id.includes(mode))[0]
+
+    return markers[type + 'Marker']
+}
+
+const getType = (target) => {
+    if (target.id.includes('Lat')) return 'lat'
+    if (target.id.includes('Lang')) return 'lng'
+}
+
+all.forEach(input => {
+    input.addEventListener('change', e => {
+
+        const targetMarker = getMarker(e.target)
+        const targetType = getType(e.target)
+
+        if (targetMarker.options) {
+            targetMarker.setLatLng(L.latLng(e.target.value, targetMarker.getLatLng()[targetType]))
+        } else {
+
+        }
+    })
+    input.addEventListener('focus', e => {
+        currentMode = modes.indexOf(modes.filter(mode => e.target.id.includes(mode))[0])
+    })
+})
+
 map.on('dblclick', e => {
     if (currentMode > 2) return
 
@@ -54,5 +82,9 @@ map.on('dblclick', e => {
 
     update(e)
 
-    currentMode++
+    let i = 0
+    if (markers.portMarker.options) i++
+    if (markers.signMarker.options) i++
+    if (markers.starboardMarker.options) i++
+    currentMode = i
 })
