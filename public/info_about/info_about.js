@@ -55,6 +55,13 @@ const updateDrag = (currentMode) => {
     }
 }
 
+const updateLocalStorage = () => {
+    localStorage.setItem('data', JSON.stringify({
+        lats: lats.map(lat => lat.value),
+        lngs: langs.map(lang => lang.value)
+    }))
+}
+
 const getMarker = (target) => {
     const type = modes.filter(mode => target.id.includes(mode))[0]
 
@@ -92,6 +99,7 @@ all.forEach(input => {
         }
     })
     input.addEventListener('focus', e => {
+        updateLocalStorage()
         currentMode = modes.indexOf(modes.filter(mode => e.target.id.includes(mode))[0])
     })
 })
@@ -109,10 +117,18 @@ map.on('dblclick', e => {
 
     update(e)
     updatePolyline()
+    updateLocalStorage()
 
-    let i = 0
-    if (markers.portMarker.options) i++
-    if (markers.signMarker.options) i++
-    if (markers.starboardMarker.options) i++
-    currentMode = i
+    if (!markers.portMarker.options) {
+        currentMode = 0
+        return
+    }
+    if (!markers.starboardMarker.options) {
+        currentMode = 1
+        return
+    }
+    if (!markers.signMarker.options) {
+        currentMode = 2
+        return
+    }
 })

@@ -21,8 +21,8 @@ export const MapContainer = ({center, setCenter}) => {
     const mapRef = useRef(null);
 
 
-    const masslat = [59.939095, 58.939095, 59.939095]
-    const masslng = [30.315868, 30.315868, 30.315868]
+    let masslat = []
+    let masslng = []
 
     ///////
     const handleShowPlayer = (status) => setVisible(status);
@@ -168,15 +168,36 @@ export const MapContainer = ({center, setCenter}) => {
         const clickedCoords = [latlng.lat, latlng.lng];
         setStartLine(clickedCoords);
     }
-    /////////Добалвение буев заранее заданных
-    const OnCreateSetBuiCoords = (masslat, masslng) => {
-        for (var i = 0; i < masslat.length; i++) {
-            console.log("sdfsdfdfdfd")
-            console.log(masslat[i], masslng[i])
-            setStartLine([masslat[i], masslng[i]]);
-        }
 
-    }
+    useEffect(() => {
+        const OnLoad = () => {
+            for (let i = 0; i < masslat.length; i++) {
+                console.log("sdfsdfdfdfd")
+                console.log(masslat[i], masslng[i])
+                setStartLine([masslat[i], masslng[i]]);
+            }
+        }
+        /*fetch('http://localhost:8080/markers')
+            .then(res => res.json())
+            .then(arrayOfMarkers => {
+                masslat = arrayOfMarkers.lats
+                masslng = arrayOfMarkers.lngs
+
+                OnLoad()
+            })
+
+        */
+
+        const arrayOfMarkers = JSON.parse(localStorage.getItem('data'))
+        if (!arrayOfMarkers) return
+        masslat = arrayOfMarkers.lats
+        masslng = arrayOfMarkers.lngs
+
+        OnLoad()
+
+    }, [])
+
+
     const OnCreateSetBuiTitle = (id) => {
         if (id == 0) {
             return ('port');
@@ -234,7 +255,6 @@ export const MapContainer = ({center, setCenter}) => {
                 easeLinearity={0.35}
                 ref={mapRef}
                 onClick={handleClick}
-                load={OnCreateSetBuiCoords(masslat, masslng)}
             >
                 {markers}
                 <TileLayer

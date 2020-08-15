@@ -12,6 +12,9 @@ app.use((req, res, next) => {
 })
 
 const startServer = () => {
+    app.get('/markers', (req, res) => {
+        res.send({"lats":["59.941268722353065","59.9438610088778","59.89317366237529"],"lngs":["30.27555622053525","30.40917545857285","30.466510656516625"]})
+    })
     app.get('/', (req, res) => {
         res.send(data)
     })
