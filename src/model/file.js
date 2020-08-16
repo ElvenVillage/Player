@@ -5,11 +5,6 @@ export default {
     setFileName: action((state, payload) => {
         state.fileName = payload;
     }),
-    headers: null,
-    setHeaders: action((state, payload) => {
-        if (!payload) return;
-        state.headers = payload;
-    }),
     clearFileState: action((state, payload) => {
         state.fileName = "";
         state.data = null;

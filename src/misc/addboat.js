@@ -18,7 +18,7 @@ import {handleProcessData} from "./handlers"
 const AddBoat = ({open, setOpen, data, url, setData}) => {
     const {setupBoat} = useStoreActions(actions => actions.boats)
     const {updatePlayer} = useStoreActions(actions => actions.player)
-    const {setHeaders} = useStoreActions(actions => actions.file)
+    const {setHeaders} = useStoreActions(actions => actions.headers)
     const {classes} = useStoreState(state => state.classes)
     const [color, setColor] = useState("#000")
     const [urlString, setUrl] = useState("")
