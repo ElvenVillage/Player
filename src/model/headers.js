@@ -13,7 +13,8 @@ export default {
         if (state.selectedHeaders.includes(payload)) {
             state.selectedHeaders = state.selectedHeaders.filter(header => header != payload)
         } else {
-            state.selectedHeaders.push(payload)
+            state.selectedHeaders = state.headers
+                .filter(header => ((header == payload) || (state.selectedHeaders.includes(header))))
         }
     }),
 

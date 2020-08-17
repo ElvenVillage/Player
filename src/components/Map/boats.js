@@ -27,11 +27,11 @@ export default function Boats({checked, setCenter}) {
         boats.forEach(boat => {
             const curData = boat.data
             if (curData.length - 1 > currentTime) {
-                boatsData.push(Object.values(curData[currentTime]).filter((cell, idx) => {
+                boatsData.push(Object.values(curData[currentTime]).slice(4).filter((cell, idx) => {
                     return (selectedHeaders.includes(headers[idx]))
                 }))
             } else {
-                boatsData.push(Object.values(curData[curData.length - 1]).filter((cell, idx) => {
+                boatsData.push(Object.values(curData[curData.length - 1]).slice(4).filter((cell, idx) => {
                     return (selectedHeaders.includes(headers[idx]))
                 }))
             }
