@@ -15,9 +15,22 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-justify-content: space-around;
-  padding: 0 32px; }
+  justify-content: space-between;
+  padding: 0 32px; 
+  -ms-align-items: center;
+  align-items: center;
+}
+.header_left{
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
 
+}
+.item3{
+  margin-left: 1em;
+}
 .header___item {
   color: #fff;
   font-size: 1.45rem;
