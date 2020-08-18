@@ -33,9 +33,9 @@ justify-content: space-around;
     border-radius: 4px;
     letter-spacing: 0.02857em;
     text-transform: uppercase;
-    & a{
+   
     	color: #000;
-    }
+    
     &:hover{
 		background-color: #f5f3f3;
     }
@@ -43,14 +43,32 @@ justify-content: space-around;
 
 .token {
 display: flex;
-justify-content: center;
+
 margin-top: 64px;
+
 }
 .token__items{
-	width: 300px;
+	width: 100%;
 	display: flex;
-	justify-content: space-around;
+	justify-content: center;
+	& p{
+		
+		font-size: 2em;
+	
+
+	}
 }
 .item{
+	display: flex;
+
+	& input{
+		text-align: right;
+		font-size: 2em;
+		flex: 50%;
+	}
+	& input[type="text"],input[type="password"]{
+		flex: 50%;
+		text-align: left;
+	}
 	margin-top: 0.1em;
 }
