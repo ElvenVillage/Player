@@ -31,9 +31,8 @@ body {
   line-height: 1.75;
   border-radius: 4px;
   letter-spacing: 0.02857em;
-  text-transform: uppercase; }
-  .btn a {
-    color: #000; }
+  text-transform: uppercase;
+  color: #000; }
   .btn:hover {
     background-color: #f5f3f3; }
 
@@ -41,18 +40,32 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
   margin-top: 64px; }
 
 .token__items {
-  width: 300px;
+  width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-pack: distribute;
-  justify-content: space-around; }
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center; }
+  .token__items p {
+    font-size: 2em; }
 
 .item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
   margin-top: 0.1em; }
+  .item input {
+    text-align: right;
+    font-size: 2em;
+    -webkit-box-flex: 50%;
+    -ms-flex: 50%;
+    flex: 50%; }
+  .item input[type="text"], .item input[type="password"] {
+    -webkit-box-flex: 50%;
+    -ms-flex: 50%;
+    flex: 50%;
+    text-align: left; }
