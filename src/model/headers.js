@@ -1,4 +1,4 @@
-import { action } from 'easy-peasy'
+import {action} from 'easy-peasy'
 
 export default {
     headers: [],
@@ -13,8 +13,11 @@ export default {
         if (state.selectedHeaders.includes(payload)) {
             state.selectedHeaders = state.selectedHeaders.filter(header => header != payload)
         } else {
-            state.selectedHeaders = state.headers
-                .filter(header => ((header == payload) || (state.selectedHeaders.includes(header))))
+            if (state.selectedHeaders.length >= 4)
+                return
+            else
+                state.selectedHeaders = state.headers
+                    .filter(header => ((header == payload) || (state.selectedHeaders.includes(header))))
         }
     }),
 
