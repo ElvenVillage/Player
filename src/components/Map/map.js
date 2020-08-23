@@ -20,6 +20,7 @@ export const MapContainer = ({center, setCenter}) => {
     const [avgWind, setAvgWind] = useState(-1);
     const mapRef = useRef(null);
 
+    const [ListOfMarkers, setListOfMarkers] = useState([])
 
     let masslat = []
     let masslng = []
@@ -175,6 +176,8 @@ export const MapContainer = ({center, setCenter}) => {
                 console.log("sdfsdfdfdfd")
                 console.log(masslat[i], masslng[i])
                 setStartLine([masslat[i], masslng[i]]);
+
+                ListOfMarkers.push([masslat[i], masslng[i]])
             }
         }
         /*fetch('http://localhost:8080/markers')
@@ -204,6 +207,8 @@ export const MapContainer = ({center, setCenter}) => {
         }
         if (id == 1) {
             return ('starboard');
+        } else {
+            return ('Marker' + (id-1))
         }
     }
     ////////
@@ -214,11 +219,11 @@ export const MapContainer = ({center, setCenter}) => {
         updateStartLine({id, coords});
     }
 
-    const markers = startLine.length < 1 && startLine !== null
+    const markers = ListOfMarkers.length < 1 && ListOfMarkers !== null
         ? null
         : (
             <>
-                {startLine.map((marker, idx) => (
+                {ListOfMarkers.map((marker, idx) => (
                     <Marker
                         id={idx}
                         onDragEnd={handleDragEnd}
