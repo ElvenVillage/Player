@@ -6,7 +6,6 @@ let currentMode = 0
 let lats = []
 let langs = []
 
-const all = [...lats, ...langs]
 const map = L.map('mapid').setView([59.939095, 30.315868], 13)
 
 let polyline = {}
@@ -80,7 +79,9 @@ const getType = (target) => {
 
 updateDomElements()
 
-all.forEach(input => {
+const all = [...lats, ...langs]
+
+const addListenerToInput = (input) => {
     input.addEventListener('change', e => {
 
         const targetMarker = getMarker(e.target)
@@ -107,6 +108,10 @@ all.forEach(input => {
         updateLocalStorage()
         currentMode = modes.indexOf(modes.filter(mode => e.target.id.includes(mode))[0])
     })
+}
+
+all.forEach(input => {
+    addListenerToInput(input)
 })
 
 map.on('dblclick', e => {
@@ -130,6 +135,8 @@ map.on('dblclick', e => {
         div.appendChild(lat)
 
         document.getElementsByClassName('tabs__input')[0].appendChild(div)
+
+        addListenerToInput(lang); addListenerToInput(lat)
 
         const newMarkerName = document.createElement('div')
         newMarkerName.classList.add('tabs-list__bui2', 'tabs-list__item')
