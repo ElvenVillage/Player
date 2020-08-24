@@ -22,7 +22,6 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
     const {classes} = useStoreState(state => state.classes)
     const [color, setColor] = useState("#000")
     const [urlString, setUrl] = useState("")
-    const [errorFile, setErrorFile] = useState(false)
     const [error, setError] = useState("")
     const [visible, setVisible] = useState(false)
     const [text, setText] = useState("")

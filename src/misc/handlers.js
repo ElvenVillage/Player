@@ -24,9 +24,12 @@ const processData = (file, callback) => {
             download: true,
             dynamicTyping: true,
             fastMode: true,
-            complete: (data) =>
+            chunk: (data) =>
                 filterData(data, callback),
-            worker: true,
+            beforeFirstChunk: (chunk) => {
+                return chunk.split('\r\n').slice(10).join('\r\n')
+            },
+            worker: false
         }
     );
 }
@@ -37,7 +40,6 @@ function filterData({data}, callback) {
         return;
     }
     if (
-        !data[0].hasOwnProperty("SPD") ||
         !data[0].hasOwnProperty("LAT") ||
         !data[0].hasOwnProperty("LON") ||
         !data[0].hasOwnProperty("SEC")
@@ -62,8 +64,7 @@ function filterData({data}, callback) {
     //filters by speed > 0 and lat or lon > 0 and for each second
     data.forEach((el, index) => {
         if (index + 1 === data.length) return;
-        if (el.SPD > 0 && 
-            el.LAT !== 0 && 
+        if (el.LAT !== 0 &&
             el.LON !== 0 && 
             el.SEC !== data[index + 1].SEC) {
                 filteredData.push(el);
