@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Map, Marker, TileLayer, Polyline, ScaleControl} from 'react-leaflet'
+import {Map, Marker, TileLayer, Polyline, ScaleControl, Popup} from 'react-leaflet'
 import {useStoreState, useStoreActions} from 'easy-peasy'
 import {useInterval, calculateAngle} from '../../misc/handlers'
 import Wind from './wind'
@@ -230,9 +230,9 @@ export const MapContainer = ({center, setCenter}) => {
                         position={marker}
                         draggable={true}
                         key={`marker-${idx}`}
-                        icon={PinIcon}
-                        title={OnCreateSetBuiTitle(idx)}
-                    />
+                        icon={PinIcon} >
+                        <Popup>{OnCreateSetBuiTitle(idx)}</Popup>
+                    </Marker>
                 ))}
                 <Polyline className={classes.polyline} color={'black'} positions={startLine}/>
             </>

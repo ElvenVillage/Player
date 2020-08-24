@@ -7,13 +7,17 @@ import {
     Button,
     TextField,
     DialogActions,
-    DialogContentText,
+    DialogContentText, List, ListItemAvatar,
 } from '@material-ui/core'
 import {useStoreActions, useStoreState} from 'easy-peasy'
 
 import CirclePicker from 'react-color'
 import PaletteIcon from '@material-ui/icons/Palette'
 import {handleProcessData} from "./handlers"
+import ListItem from "@material-ui/core/ListItem";
+import Avatar from "@material-ui/core/Avatar";
+import file from "../model/file";
+import ListItemText from "@material-ui/core/ListItemText";
 
 const AddBoat = ({open, setOpen, data, url, setData}) => {
     const {setupBoat} = useStoreActions(actions => actions.boats)
@@ -21,10 +25,12 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
     const {setHeaders} = useStoreActions(actions => actions.headers)
     const {classes} = useStoreState(state => state.classes)
     const [color, setColor] = useState("#000")
-    const [urlString, setUrl] = useState("")
+    const [urlString, setUrlString] = useState("")
     const [error, setError] = useState("")
     const [visible, setVisible] = useState(false)
     const [text, setText] = useState("")
+
+    const [listOfUrls, setListOfUrls] = useState([])
 
     const cleanState = () => {
         setOpen(false)
@@ -47,6 +53,12 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
         updatePlayer(player)
         cleanState()
     }
+
+    useEffect(() => {
+        fetch('/files/get_names.php')
+            .then(res => res.json())
+            .then(fileUrls => setListOfUrls(fileUrls))
+    }, [])
 
     const handleConfirmation = useCallback(() => {
         if (!text) {
@@ -72,6 +84,11 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
         setColor(color.hex)
     }
 
+    const download = (idx) => {
+        setUrlString(`/files/get.php?fid=${listOfUrls[idx].id}`)
+        handleConfirmation()
+    }
+
     return (
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">{url ? 'Укажите URL log-файла' : 'Загрузка файла'}</DialogTitle>
@@ -93,14 +110,29 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
                     value={text}
                 />
                 {url ?
-                    <TextField
-                        required
-                        margin="dense"
-                        label="URL"
-                        onChange={(e) => {
-                            setUrl(e.currentTarget.value)
-                        }}
-                    /> : ""
+                    <>
+                        <List>
+                            {listOfUrls.map((fileUrl, idx) => {
+                                return (
+                                    <ListItem onClick={() => download(idx)}>
+                                        <ListItemAvatar>
+                                            <div>{fileUrl.name}</div>
+                                        </ListItemAvatar>
+                                        <ListItemText primary={fileUrl.title}
+                                                      secondary={fileUrl.description}/>
+                                    </ListItem>
+                                )
+                            })}
+                        </List>
+                        <TextField
+                            required
+                            margin="dense"
+                            label="URL"
+                            onChange={(e) => {
+                                setUrlString(e.currentTarget.value)
+                            }}
+                        />
+                    </> : ""
                 }
                 <>
                     <Fab
