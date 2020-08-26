@@ -19,7 +19,7 @@ import ListItemText from "@material-ui/core/ListItemText"
 
 const AddBoat = ({open, setOpen, data, url, setData}) => {
     const {setupBoat} = useStoreActions(actions => actions.boats)
-    const {updatePlayer} = useStoreActions(actions => actions.player)
+    const {updatePlayer, setIsReady} = useStoreActions(actions => actions.player)
     const {setHeaders} = useStoreActions(actions => actions.headers)
     const {classes} = useStoreState(state => state.classes)
     const [color, setColor] = useState("#000")
@@ -50,6 +50,8 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
         obj.color = color
         setupBoat(obj)
         updatePlayer(player)
+
+        if (obj.data[0].AWA != -1) setIsReady(true)
         cleanState()
     }
 

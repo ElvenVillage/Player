@@ -1,36 +1,34 @@
-import React from 'react';
+import React from 'react'
 import {
     useStoreState
-} from 'easy-peasy';
+} from 'easy-peasy'
 import {
     Typography,
     Box
-} from '@material-ui/core';
-import NavigationIcon from '@material-ui/icons/Navigation';
+} from '@material-ui/core'
+import NavigationIcon from '@material-ui/icons/Navigation'
+import CloseIcon from '@material-ui/icons/Close'
 
-const Wind = ({wind, avgWind}) => {
-    const { classes } = useStoreState(state => state.classes);
-    if (wind < 0) return (<></>);
+const Wind = ({wind, isReady}) => {
+    const {classes} = useStoreState(state => state.classes)
+
     return (
         <Typography component="div" className={classes.windDiv} id="wind-div">
-        <Box
-            align="right"
-            fontSize={20}
-            className={classes.windText}
-        >
-            Ветер
-            <div className={classes.arrowsDiv}>
-            <NavigationIcon
-                className={classes.arrow}
-                style={{transform: `rotate(${wind - 180}deg)`}}
-            />
-            <NavigationIcon
-                className={classes.redArrow}
-                style={{transform: `rotate(${avgWind - 180}deg)`}}
-            />
-            </div>
+            <Box
+                align="right"
+                fontSize={20}
+                className={classes.windText}
+            >
+                Ветер
+                <div className={classes.arrowsDiv}>
+                    {isReady ? <NavigationIcon
+                        className={classes.arrow}
+                        style={{transform: `rotate(${wind - 180}deg)`}}
+                    /> : <CloseIcon className={classes.arrow}/>}
+
+                </div>
             </Box>
-            
+
         </Typography>
     );
 }

@@ -4,6 +4,10 @@ export default {
     currentTime: 0,
     startTime: null,
     endTime: null,
+    isReady: false,
+    setIsReady: action((state, payload) => {
+        state.isReady = payload
+    }),
     updatePlayer: action((state, payload) => {
         if (!payload) return;
         const endTime = Math.max(state.endTime, payload.endTime);
