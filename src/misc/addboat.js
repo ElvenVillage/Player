@@ -14,10 +14,8 @@ import {useStoreActions, useStoreState} from 'easy-peasy'
 import CirclePicker from 'react-color'
 import PaletteIcon from '@material-ui/icons/Palette'
 import {handleProcessData} from "./handlers"
-import ListItem from "@material-ui/core/ListItem";
-import Avatar from "@material-ui/core/Avatar";
-import file from "../model/file";
-import ListItemText from "@material-ui/core/ListItemText";
+import ListItem from "@material-ui/core/ListItem"
+import ListItemText from "@material-ui/core/ListItemText"
 
 const AddBoat = ({open, setOpen, data, url, setData}) => {
     const {setupBoat} = useStoreActions(actions => actions.boats)
@@ -31,6 +29,7 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
     const [text, setText] = useState("")
 
     const [listOfUrls, setListOfUrls] = useState([])
+    const [chosenUrl, setChosenUrl] = useState(-1)
 
     const cleanState = () => {
         setOpen(false)
@@ -54,10 +53,18 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
         cleanState()
     }
 
+    const downloadFileList = async () => {
+        const response = await fetch('/files/get_names.php')
+        try {
+            const json = await response.json()
+            setListOfUrls(json)
+        } catch (e) {
+            setListOfUrls([])
+        }
+    }
+
     useEffect(() => {
-        fetch('/files/get_names.php')
-            .then(res => res.json())
-            .then(fileUrls => setListOfUrls(fileUrls))
+        downloadFileList()
     }, [])
 
     const handleConfirmation = useCallback(() => {
@@ -76,7 +83,7 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
             })
 
         }
-    }, [text, urlString, data])
+    }, [text, urlString, data, color])
 
 
     const handleColor = (color) => {
@@ -86,7 +93,7 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
 
     const download = (idx) => {
         setUrlString(`/files/get.php?fid=${listOfUrls[idx].id}`)
-        handleConfirmation()
+        setChosenUrl(idx)
     }
 
     return (
@@ -112,9 +119,12 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
                 {url ?
                     <>
                         <List>
-                            {listOfUrls.map((fileUrl, idx) => {
+                            {listOfUrls ? listOfUrls.map((fileUrl, idx) => {
                                 return (
-                                    <ListItem onClick={() => download(idx)}>
+                                    <ListItem style={(idx === chosenUrl) ? {
+                                        backgroundColor: "blue"
+                                    } : {backgroundColor: "white"}
+                                    } onClick={() => download(idx)}>
                                         <ListItemAvatar>
                                             <div>{fileUrl.name}</div>
                                         </ListItemAvatar>
@@ -122,7 +132,7 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
                                                       secondary={fileUrl.description}/>
                                     </ListItem>
                                 )
-                            })}
+                            }) : <></>}
                         </List>
                         <TextField
                             required
@@ -147,7 +157,7 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
                         <div style={{position: 'fixed', marginTop: '10px', zIndex: '1'}}>
                             <CirclePicker
                                 color={color}
-                                onChangeComplete={handleColor}
+                                onChangeComplete={(color) => handleColor(color)}
                             />
                         </div>
 
