@@ -133,10 +133,10 @@ export const MapContainer = ({center, setCenter}) => {
         boats.forEach(boat => {
             const curData = boat.data
             if (curData.length - 1 > val) {
-                const speed = Math.round(curData[val].SPD * 100) / 100
+                const speed = Math.round(curData[val].SOG * 100) / 100
                 speeds.push(speed)
             } else {
-                const speed = Math.round(curData[curData.length - 1].SPD * 100) / 100
+                const speed = Math.round(curData[curData.length - 1].SOG * 100) / 100
                 speeds.push(speed)
             }
         })

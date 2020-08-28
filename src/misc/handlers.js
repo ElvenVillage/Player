@@ -83,7 +83,7 @@ function filterData({data}, callback) {
     avgLat /= length;
     avgLon /= length;
     // calculation of speed down to .00 precision
-    obj.speed = Math.round(filteredData[0].SPD * 100) / 100;
+    obj.speed = Math.round(filteredData[0].SOG * 100) / 100;
     obj.coords = coords;
     obj.currentBoatCoords = coords[0];
     obj.currentBoatSpeed = obj.speed;
