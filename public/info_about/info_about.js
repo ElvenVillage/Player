@@ -2,7 +2,7 @@
 
 const modes = ['port', 'starboard']
 let currentMode = 0
-
+var input = document.getElementsByTagName('input');
 let lats = []
 let langs = []
 
@@ -116,7 +116,7 @@ all.forEach(input => {
 
 map.on('dblclick', e => {
     if (currentMode > 1) {
-        modes.push('Marker' + (currentMode - 1))
+        modes.push('Marker' + (currentMode - 1)+':')
 
         const div = document.createElement('div')
         div.classList.add('tabs-input__item', 'tabs-input__text3')
@@ -139,7 +139,7 @@ map.on('dblclick', e => {
         addListenerToInput(lang); addListenerToInput(lat)
 
         const newMarkerName = document.createElement('div')
-        newMarkerName.classList.add('tabs-list__bui2', 'tabs-list__item')
+        newMarkerName.classList.add('tabs-list__bui3', 'tabs-list__item')
         newMarkerName.innerText = modes[currentMode]
         document.getElementsByClassName('tabs-list__conent')[0].appendChild(newMarkerName)
 
