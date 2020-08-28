@@ -1,18 +1,20 @@
 'use strict'
 
-const modes = ['port', 'starboard']
+const modes = ['port', 'starboard', 'sign']
 let currentMode = 0
-var input = document.getElementsByTagName('input');
-let lats = []
-let langs = []
 
+const lats = modes.map(mode => document.getElementById(mode + 'Lat'))
+const langs = modes.map(mode => document.getElementById(mode + 'Lang'))
+
+const all = [...lats, ...langs]
 const map = L.map('mapid').setView([59.939095, 30.315868], 13)
 
 let polyline = {}
 
 const markers = {
     portMarker: {},
-    starboardMarker: {}
+    starboardMarker: {},
+    signMarker: {}
 }
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -24,11 +26,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     zoomOffset: -1,
 }).addTo(map)
 
-
-const updateDomElements = () => {
-    lats = modes.map(mode => document.getElementById(mode + 'Lat'))
-    langs = modes.map(mode => document.getElementById(mode + 'Lang'))
-}
 
 const update = (e) => {
     lats.filter(lat => lat.id.includes(modes[currentMode])).forEach(lat => lat.value = e.latlng.lat)
@@ -77,11 +74,8 @@ const getType = (target) => {
 }
 
 
-updateDomElements()
 
-const all = [...lats, ...langs]
-
-const addListenerToInput = (input) => {
+all.forEach(input => {
     input.addEventListener('change', e => {
 
         const targetMarker = getMarker(e.target)
@@ -108,43 +102,10 @@ const addListenerToInput = (input) => {
         updateLocalStorage()
         currentMode = modes.indexOf(modes.filter(mode => e.target.id.includes(mode))[0])
     })
-}
-
-all.forEach(input => {
-    addListenerToInput(input)
 })
 
 map.on('dblclick', e => {
-    if (currentMode > 1) {
-        modes.push('Marker' + (currentMode - 1)+':')
-
-        const div = document.createElement('div')
-        div.classList.add('tabs-input__item', 'tabs-input__text3')
-
-        const lang = document.createElement('input')
-        lang.type = 'text'
-        lang.classList.add('tabs-input__input-lang')
-        lang.id = modes[currentMode] + 'Lang'
-
-        const lat = document.createElement('input')
-        lat.type = 'text'
-        lat.classList.add('tabs-input__input-lat')
-        lat.id = modes[currentMode] + 'Lat'
-
-        div.appendChild(lang)
-        div.appendChild(lat)
-
-        document.getElementsByClassName('tabs__input')[0].appendChild(div)
-
-        addListenerToInput(lang); addListenerToInput(lat)
-
-        const newMarkerName = document.createElement('div')
-        newMarkerName.classList.add('tabs-list__bui3', 'tabs-list__item')
-        newMarkerName.innerText = modes[currentMode]
-        document.getElementsByClassName('tabs-list__conent')[0].appendChild(newMarkerName)
-
-        updateDomElements()
-    }
+    if (currentMode > 2) return
 
     markers[modes[currentMode] + 'Marker'] = L.marker(e.latlng, {
         title: modes[currentMode],
@@ -166,8 +127,8 @@ map.on('dblclick', e => {
         currentMode = 1
         return
     }
-
-    if ((markers.portMarker.options) && (markers.starboardMarker.options)) {
-        currentMode++
+    if (!markers.signMarker.options) {
+        currentMode = 2
+        return
     }
 })
