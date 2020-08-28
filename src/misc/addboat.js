@@ -7,24 +7,29 @@ import {
     Button,
     TextField,
     DialogActions,
-    DialogContentText,
+    DialogContentText, List, ListItemAvatar,
 } from '@material-ui/core'
 import {useStoreActions, useStoreState} from 'easy-peasy'
 
 import CirclePicker from 'react-color'
 import PaletteIcon from '@material-ui/icons/Palette'
 import {handleProcessData} from "./handlers"
+import ListItem from "@material-ui/core/ListItem"
+import ListItemText from "@material-ui/core/ListItemText"
 
 const AddBoat = ({open, setOpen, data, url, setData}) => {
     const {setupBoat} = useStoreActions(actions => actions.boats)
-    const {updatePlayer} = useStoreActions(actions => actions.player)
+    const {updatePlayer, setIsReady} = useStoreActions(actions => actions.player)
     const {setHeaders} = useStoreActions(actions => actions.headers)
     const {classes} = useStoreState(state => state.classes)
     const [color, setColor] = useState("#000")
-    const [urlString, setUrl] = useState("")
+    const [urlString, setUrlString] = useState("")
     const [error, setError] = useState("")
     const [visible, setVisible] = useState(false)
     const [text, setText] = useState("")
+
+    const [listOfUrls, setListOfUrls] = useState([])
+    const [chosenUrl, setChosenUrl] = useState(-1)
 
     const cleanState = () => {
         setOpen(false)
@@ -45,8 +50,24 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
         obj.color = color
         setupBoat(obj)
         updatePlayer(player)
+
+        if (obj.data[0].AWA != -1) setIsReady(true)
         cleanState()
     }
+
+    const downloadFileList = async () => {
+        const response = await fetch('/files/get_names.php')
+        try {
+            const json = await response.json()
+            setListOfUrls(json)
+        } catch (e) {
+            setListOfUrls([])
+        }
+    }
+
+    useEffect(() => {
+        downloadFileList()
+    }, [])
 
     const handleConfirmation = useCallback(() => {
         if (!text) {
@@ -64,12 +85,17 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
             })
 
         }
-    }, [text, urlString, data])
+    }, [text, urlString, data, color])
 
 
     const handleColor = (color) => {
         if (!color) return
         setColor(color.hex)
+    }
+
+    const download = (idx) => {
+        setUrlString(`/files/get.php?fid=${listOfUrls[idx].id}`)
+        setChosenUrl(idx)
     }
 
     return (
@@ -93,14 +119,32 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
                     value={text}
                 />
                 {url ?
-                    <TextField
-                        required
-                        margin="dense"
-                        label="URL"
-                        onChange={(e) => {
-                            setUrl(e.currentTarget.value)
-                        }}
-                    /> : ""
+                    <>
+                        <List>
+                            {listOfUrls ? listOfUrls.map((fileUrl, idx) => {
+                                return (
+                                    <ListItem style={(idx === chosenUrl) ? {
+                                        backgroundColor: "blue"
+                                    } : {backgroundColor: "white"}
+                                    } onClick={() => download(idx)}>
+                                        <ListItemAvatar>
+                                            <div>{fileUrl.name}</div>
+                                        </ListItemAvatar>
+                                        <ListItemText primary={fileUrl.title}
+                                                      secondary={fileUrl.description}/>
+                                    </ListItem>
+                                )
+                            }) : <></>}
+                        </List>
+                        <TextField
+                            required
+                            margin="dense"
+                            label="URL"
+                            onChange={(e) => {
+                                setUrlString(e.currentTarget.value)
+                            }}
+                        />
+                    </> : ""
                 }
                 <>
                     <Fab
@@ -115,7 +159,7 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
                         <div style={{position: 'fixed', marginTop: '10px', zIndex: '1'}}>
                             <CirclePicker
                                 color={color}
-                                onChangeComplete={handleColor}
+                                onChangeComplete={(color) => handleColor(color)}
                             />
                         </div>
 
