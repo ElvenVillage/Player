@@ -1,4 +1,8 @@
 <?php
+<<<<<<< HEAD
+=======
+    $page='profile';
+>>>>>>> dabac5b254297bb77cb2057f176105ea0877ff44
     include_once('../header.php');
     $ui=$user->info($id);
   ?>
@@ -23,7 +27,11 @@
 <div class="wrapper">
 
     <div class="content">
+<<<<<<< HEAD
         <form method='post' action='' class="form-reg">
+=======
+        <form action='http://sail.newpage.xyz/test/build/' class="form-reg">
+>>>>>>> dabac5b254297bb77cb2057f176105ea0877ff44
             <div class="tabs__body">
                 <div class="tabs__block" id="tab_02">
                     <div class="tabs__top">
