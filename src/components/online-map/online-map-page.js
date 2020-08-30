@@ -3,7 +3,7 @@ import Boats from '../Map/boats'
 import Map from '../Map/map'
 import FabWrapper from './fabwrapper'
 import {Container, Fade, Paper, Grid, Typography, Checkbox} from '@material-ui/core'
-import {useStore, useStoreActions, useStoreState} from 'easy-peasy'
+import {useStoreActions, useStoreState} from 'easy-peasy'
 import {filterData} from "../../misc/handlers";
 
 export const OnlineMapPage = () => {
@@ -19,16 +19,18 @@ export const OnlineMapPage = () => {
 
     const {endTime} = useStoreState(state => state.player)
 
-    const [lastSeemed, setLastSeemed] = useState([])
+    const [lastSeemed, setLastSeemed] = useState({})
 
     const handleCheckbox = () => setChecked(!checked)
     const [boats, setBoats] = useState([])
 
     const updateBoatsFromJson = (serverArray, id) => {
-        setLastSeemed(lastSeemed.map((val, idx) => {
-            if (idx == id) return val + 1
-            else return val
-        }))
+        let tmp = {}
+        for (let key in lastSeemed) {
+            tmp[key] = (key == id)? lastSeemed[key] + 1 : lastSeemed[key]
+        }
+
+        setLastSeemed(tmp)
         filterData({data: serverArray}, (data) => {
             setHeaders(data.headers)
             const {obj, player} = data
@@ -45,7 +47,10 @@ export const OnlineMapPage = () => {
             .then(json => {
                 json.forEach(js => {
                     setBoats([...boats, js.id])
-                    setLastSeemed([...lastSeemed, 0])
+                    boats.push(js.id)
+
+                    lastSeemed[js.id] = 0
+                    setLastSeemed(lastSeemed)
                     fetch(`http://localhost:8080/index?last=0&id=${js.id}`)
                         .then(boatRes => boatRes.json())
                         .then(boatJson => {
@@ -81,16 +86,16 @@ export const OnlineMapPage = () => {
     useEffect(() => {
         const timerIdForBoats = setInterval(() => {
             boats.forEach(boatID => {
-                fetch(`http://localhost:8080/index?last=${lastSeemed}&id=${boatID}`)
+                fetch(`http://localhost:8080/index?last=${lastSeemed[parseInt(boatID)]}&id=${boatID}`)
                     .then(res => res.json())
-                    .then(resp => updateBoatsFromJson(resp))
+                    .then(resp => updateBoatsFromJson(resp, boatID))
             })
         }, 5000)
 
         return () => {
             clearInterval(timerIdForBoats)
         }
-    }, [endTime, boats])
+    }, [endTime, boats, lastSeemed])
 
     return (
         <Container maxWidth="xl" className={classes.mapContainer}>
