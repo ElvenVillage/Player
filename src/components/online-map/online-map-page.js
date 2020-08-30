@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, {useState, useEffect} from 'react'
 import Boats from '../Map/boats'
 import Map from '../Map/map'
 import FabWrapper from './fabwrapper'
-import { Container, Fade, Paper, Grid, Typography, Checkbox } from '@material-ui/core'
-import {useStoreActions, useStoreState} from 'easy-peasy'
+import {Container, Fade, Paper, Grid, Typography, Checkbox} from '@material-ui/core'
+import {useStore, useStoreActions, useStoreState} from 'easy-peasy'
+import {filterData} from "../../misc/handlers";
 
 export const OnlineMapPage = () => {
 
@@ -11,10 +12,57 @@ export const OnlineMapPage = () => {
     const [checked, setChecked] = useState(false)
     const [center, setCenter] = useState([0, 0])
 
-    const {started} = useStoreState(state => state.online)
     const {setStarted} = useStoreActions(actions => actions.online)
+    const {setupBoat, appendDataToBoat} = useStoreActions(actions => actions.boats)
+    const {setHeaders} = useStoreActions(actions => actions.headers)
+    const {updatePlayer} = useStoreActions(actions => actions.player)
+
+    const {endTime} = useStoreState(state => state.player)
+
+    const [lastSeemed, setLastSeemed] = useState([])
 
     const handleCheckbox = () => setChecked(!checked)
+    const [boats, setBoats] = useState([])
+
+    const updateBoatsFromJson = (serverArray, id) => {
+        setLastSeemed(lastSeemed.map((val, idx) => {
+            if (idx == id) return val + 1
+            else return val
+        }))
+        filterData({data: serverArray}, (data) => {
+            setHeaders(data.headers)
+            const {obj, player} = data
+            player.endTime += endTime
+            appendDataToBoat({id: 0, append: obj.data})
+            updatePlayer(player)
+        })
+    }
+
+    //Инициализация лодок стартовыми параметрами
+    useEffect(() => {
+        fetch('http://localhost:8080/listOfBoats')
+            .then(res => res.json())
+            .then(json => {
+                json.forEach(js => {
+                    setBoats([...boats, js.id])
+                    setLastSeemed([...lastSeemed, 0])
+                    fetch(`http://localhost:8080/index?last=0&id=${js.id}`)
+                        .then(boatRes => boatRes.json())
+                        .then(boatJson => {
+                            filterData({data: boatJson}, (data) => {
+                                setHeaders(data.headers)
+                                const {obj, player} = data
+                                obj.name = js.name
+                                obj.color = js.color
+                                setupBoat(obj)
+                                updatePlayer(player)
+                            })
+                        })
+                })
+            })
+    }, [])
+
+
 
     useEffect(() => {
         const timerIdForStarted = setInterval(() => {
@@ -32,13 +80,17 @@ export const OnlineMapPage = () => {
 
     useEffect(() => {
         const timerIdForBoats = setInterval(() => {
-            fetch(`http://sail.newpage.xyz/api/get_boat?last=`)
+            boats.forEach(boatID => {
+                fetch(`http://localhost:8080/index?last=${lastSeemed}&id=${boatID}`)
+                    .then(res => res.json())
+                    .then(resp => updateBoatsFromJson(resp))
+            })
         }, 5000)
 
         return () => {
             clearInterval(timerIdForBoats)
         }
-    }, [])
+    }, [endTime, boats])
 
     return (
         <Container maxWidth="xl" className={classes.mapContainer}>

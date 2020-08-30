@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Boats from './boats'
 import Map from './map'
 import FabWrapper from './fabwrapper'

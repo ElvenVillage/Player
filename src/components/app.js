@@ -13,7 +13,7 @@ const App = () => {
         <CssBaseline>
             <div className={classes.root}>
                 <main className={classes.content}>
-                    {(window.location.pathname == '/')? <MapPage/> : <OnlineMapPage/>}
+                    {(window.location.pathname == '/test/build/')? <MapPage/> : <OnlineMapPage/>}
                 </main>
             </div>
         </CssBaseline>

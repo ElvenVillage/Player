@@ -34,7 +34,7 @@ const processData = (file, callback) => {
     );
 }
 
-function filterData({data}, callback) {
+export function filterData({data}, callback) {
     if (!data || data.length === 0) {
         callback(null);
         return;
@@ -55,7 +55,7 @@ function filterData({data}, callback) {
         currentBoatCoords: [],
         coords: [],
         data: [],
-        center: [],
+        center: []
     }
     const filteredData = [];
     const coords = [];
