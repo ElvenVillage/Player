@@ -40,9 +40,9 @@ export function filterData({data}, callback) {
         return;
     }
     if (
-        !data[0].hasOwnProperty("LAT") ||
-        !data[0].hasOwnProperty("LON") ||
-        !data[0].hasOwnProperty("SEC")
+        (!data[0].hasOwnProperty("LAT") && !data[0].hasOwnProperty('lat')) ||
+        (!data[0].hasOwnProperty("LON") && !data[0].hasOwnProperty('lon')) ||
+        (!data[0].hasOwnProperty("SEC") && !data[0].hasOwnProperty('sec'))
         ) {
             callback(null);
             return;

@@ -24,9 +24,13 @@ export const OnlineMapPage = () => {
     const handleCheckbox = () => setChecked(!checked)
     const [boats, setBoats] = useState([])
 
+    const getLastId = (array) => {
+        return array[array.length - 1].id
+    }
+
     const updateBoatsFromJson = (serverArray, id) => {
 
-        updateLastSeemed({id: id, value: lastSeemed[id] + 1})
+        updateLastSeemed({id: id, value: getLastId(serverArray)})
 
         filterData({data: serverArray}, (data) => {
             setHeaders(data.headers)
@@ -37,9 +41,23 @@ export const OnlineMapPage = () => {
         })
     }
 
+    function findGetParameter(parameterName) {
+        let result = null,
+            tmp = [];
+        window.location.search
+            .substr(1)
+            .split("&")
+            .forEach(function (item) {
+                tmp = item.split("=");
+                if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            });
+        return result;
+    }
+
     //Инициализация лодок стартовыми параметрами
     useEffect(() => {
-        fetch('http://localhost:8080/listOfBoats')
+        const rid = findGetParameter('race')
+        fetch(`https://sail.newpage.xyz/api/race_members.php?rid=${rid}`)
             .then(res => res.json())
             .then(json => {
                 json.forEach(js => {
@@ -47,7 +65,7 @@ export const OnlineMapPage = () => {
                     boats.push(js.id)
 
                     updateLastSeemed({id: js.id, value: 0})
-                    fetch(`http://localhost:8080/index?last=0&id=${js.id}`)
+                    fetch(`https://sail.newpage.xyz/api/get_online_race.php?lastid=0&uid=${js.id}`)
                         .then(boatRes => boatRes.json())
                         .then(boatJson => {
                             filterData({data: boatJson}, (data) => {
@@ -67,7 +85,7 @@ export const OnlineMapPage = () => {
 
     useEffect(() => {
         const timerIdForStarted = setInterval(() => {
-            fetch('http://sail.newpage.xyz/api/started.php')
+            fetch('http://localhost:9000')
                 .then(res => res.text())
                 .then(resp => {
                     setStarted(resp)
@@ -82,7 +100,7 @@ export const OnlineMapPage = () => {
     useEffect(() => {
         const timerIdForBoats = setInterval(() => {
             boats.forEach(boatID => {
-                fetch(`http://localhost:8080/index?last=${lastSeemed[parseInt(boatID)]}&id=${boatID}`)
+                fetch(`https://sail.newpage.xyz/api/get_online_race.php?lastid=${lastSeemed[parseInt(boatID)]}&uid=${boatID}`)
                     .then(res => res.json())
                     .then(resp => updateBoatsFromJson(resp, boatID))
             })

@@ -18,9 +18,8 @@ export default function Boats({checked, setCenter}) {
 
     let boatsData = []
     const handleChangeBoat = (e) => {
-        const {id} = e.currentTarget
-        const {center} = boats[id]
-        setCenter(center)
+        const id = e.currentTarget.id
+        setCenter(boats[id].coords[0])
     }
 
     if (currentTime !== null) {

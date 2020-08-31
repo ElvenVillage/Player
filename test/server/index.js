@@ -60,8 +60,7 @@ app.get('/index', (req, res) => {
 app.get('/listOfBoats', (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     res.send(`[
-    {"name":"Berlin", "color":"#191919", "id":"1"},
-    {"name":"Amsterdam", "color":"#f059ab","id":"2"}
+    {"name":"Berlin", "color":"#191919", "id":"1"}
     ]`)
 })
 
