@@ -12,25 +12,22 @@ export const OnlineMapPage = () => {
     const [checked, setChecked] = useState(false)
     const [center, setCenter] = useState([0, 0])
 
-    const {setStarted} = useStoreActions(actions => actions.online)
+    const {setStarted, updateLastSeemed} = useStoreActions(actions => actions.online)
     const {setupBoat, appendDataToBoat} = useStoreActions(actions => actions.boats)
     const {setHeaders} = useStoreActions(actions => actions.headers)
     const {updatePlayer} = useStoreActions(actions => actions.player)
 
     const {endTime} = useStoreState(state => state.player)
 
-    const [lastSeemed, setLastSeemed] = useState({})
+    const {lastSeemed} = useStoreState(state => state.online)
 
     const handleCheckbox = () => setChecked(!checked)
     const [boats, setBoats] = useState([])
 
     const updateBoatsFromJson = (serverArray, id) => {
-        let tmp = {}
-        for (let key in lastSeemed) {
-            tmp[key] = (key == id)? lastSeemed[key] + 1 : lastSeemed[key]
-        }
 
-        setLastSeemed(tmp)
+        updateLastSeemed({id: id, value: lastSeemed[id] + 1})
+
         filterData({data: serverArray}, (data) => {
             setHeaders(data.headers)
             const {obj, player} = data
@@ -49,8 +46,7 @@ export const OnlineMapPage = () => {
                     setBoats([...boats, js.id])
                     boats.push(js.id)
 
-                    lastSeemed[js.id] = 0
-                    setLastSeemed(lastSeemed)
+                    updateLastSeemed({id: js.id, value: 0})
                     fetch(`http://localhost:8080/index?last=0&id=${js.id}`)
                         .then(boatRes => boatRes.json())
                         .then(boatJson => {
