@@ -7,7 +7,7 @@ import North from './north'
 import Player from './player'
 import {CustomMarker, PinIcon} from '../../misc/graphics';
 
-export const MapContainer = ({center, setCenter}) => {
+export const MapContainer = ({center, setCenter, isOnline}) => {
     const {endTime, currentTime} = useStoreState(state => state.player)
     const {classes} = useStoreState(state => state.classes)
     const {boats, startLine, isPlacing} = useStoreState(state => state.boats)
@@ -152,7 +152,8 @@ export const MapContainer = ({center, setCenter}) => {
     useInterval(() => {
         if (currentTime >= endTime - 1) {
             setCurrentTime(endTime)
-            setPlaying(false)
+            if (!isOnline)
+                setPlaying(false)
         }
         setCurrentTime(currentTime + 1)
         updateSpeed()

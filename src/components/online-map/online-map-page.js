@@ -56,8 +56,8 @@ export const OnlineMapPage = () => {
 
     //Инициализация лодок стартовыми параметрами
     useEffect(() => {
-        const rid = findGetParameter('race')
-        fetch(`https://sail.newpage.xyz/api/race_members.php?rid=${rid}`)
+        let rid = findGetParameter('race')
+        fetch(`https://sail.newpage.xyz/api/race_members.php?${(rid)? 'rid='+rid : ''}`)
             .then(res => res.json())
             .then(json => {
                 json.forEach(js => {
@@ -121,7 +121,7 @@ export const OnlineMapPage = () => {
                                 <Typography component="h2" variant="h6" gutterBottom>
                                     Карта
                                 </Typography>
-                                <Map center={center} setCenter={setCenter}/>
+                                <Map center={center} setCenter={setCenter} isOnline={true}/>
                             </Paper>
                         </Grid>
                         <Grid item xs={4}>

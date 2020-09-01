@@ -63,6 +63,10 @@ const updateLocalStorage = () => {
         lats: lats.map(lat => lat.value),
         lngs: langs.map(lang => lang.value)
     }))
+    localStorage.setItem('boat', JSON.stringify({
+        color: document.getElementById('color'),
+        name: document.getElementsByClassName('tabs-input__text1')[0].firstElementChild.value
+    }))
 }
 
 const getMarker = (target) => {

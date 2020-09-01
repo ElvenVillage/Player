@@ -23,7 +23,7 @@ export const MapPage = () => {
                                 <Typography component="h2" variant="h6" gutterBottom>
                                     Карта
                                 </Typography>
-                                <Map center={center} setCenter={setCenter}/>
+                                <Map center={center} setCenter={setCenter} isOnline={false}/>
                             </Paper>
                         </Grid>
                         <Grid item xs={4}>
