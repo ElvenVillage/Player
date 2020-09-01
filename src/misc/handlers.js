@@ -27,7 +27,9 @@ const processData = (file, callback) => {
             chunk: (data) =>
                 filterData(data, callback),
             beforeFirstChunk: (chunk) => {
-                return chunk.split('\r\n').slice(10).join('\r\n')
+                if (chunk.startsWith('#'))
+                    return chunk.split('\r\n').slice(10).join('\r\n')
+                else return chunk
             },
             worker: false
         }
