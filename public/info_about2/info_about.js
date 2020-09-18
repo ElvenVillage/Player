@@ -59,30 +59,10 @@ const updateDrag = (currentMode) => {
 }
 
 const updateLocalStorage = () => {
-    const obj = JSON.stringify({
+    localStorage.setItem('data', JSON.stringify({
         lats: lats.map(lat => lat.value),
         lngs: langs.map(lang => lang.value)
-    })
-    const buoys = []
-    for (let i = 0; i < langs.length; i++) {
-        buoys.push({
-            lat: lats[i].value,
-            lng: langs[i].value
-        })
-    }
-    const bodyUrl = new URLSearchParams({
-        json: JSON.stringify(buoys)
-    })
-    console.log(JSON.stringify(buoys))
-    console.log(buoys)
-        fetch('https://sail.newpage.xyz/api/save_bouy.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: bodyUrl
-    })
-    localStorage.setItem('data', obj)
+    }))
 }
 
 const getMarker = (target) => {
