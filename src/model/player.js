@@ -2,9 +2,17 @@ import { action } from 'easy-peasy';
 
 export default {
     currentTime: 0,
+    visible: false,
     startTime: null,
     endTime: null,
     isReady: false,
+    needToSliceRoute: false,
+    setNeedToSliceRoute: action((state, payload) => {
+        state.needToSliceRoute = payload
+    }),
+    setVisible: action(((state, payload) => {
+        state.visible = payload
+    })),
     setIsReady: action((state, payload) => {
         state.isReady = payload
     }),

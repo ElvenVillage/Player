@@ -7,6 +7,7 @@ import AddFile from './addfile'
 import AddPins from './addpins'
 import AddUriLog from './addUrlLog'
 import ChangeHeaders from "./changeHeaders"
+import {ChangeBouysFab} from "../../misc/changeBouysFab";
 
 const FabWrapper = () => {
     const { classes } = useStoreState(state => state.classes);
@@ -17,6 +18,7 @@ const FabWrapper = () => {
         <AddFile />
         <AddUriLog />
         <Download />
+        <ChangeBouysFab />
     </div>
     );
 }

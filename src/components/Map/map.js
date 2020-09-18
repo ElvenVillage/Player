@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Map, Marker, TileLayer, Polyline, ScaleControl, Popup} from 'react-leaflet'
+import {Map, Marker, TileLayer, Polyline, ScaleControl, Popup, ZoomControl} from 'react-leaflet'
 import {useStoreState, useStoreActions} from 'easy-peasy'
 import {useInterval, calculateAngle} from '../../misc/handlers'
 import Wind from './wind'
@@ -7,30 +7,29 @@ import North from './north'
 import Player from './player'
 import {CustomMarker, PinIcon} from '../../misc/graphics';
 
+const getFirstMarkerIndex = (currentTime) => {
+    return (currentTime >= 50)? currentTime - 50 : 0
+}
+
 export const MapContainer = ({center, setCenter, isOnline}) => {
-    const {endTime, currentTime} = useStoreState(state => state.player)
+    const {endTime, currentTime, needToSliceRoute} = useStoreState(state => state.player)
     const {classes} = useStoreState(state => state.classes)
-    const {boats, startLine, isPlacing} = useStoreState(state => state.boats)
+    const {boats} = useStoreState(state => state.boats)
     const {setCurrentTime} = useStoreActions(actions => actions.player)
-    const {setCurrentBoatsSpeed, setStartLine, updateStartLine} = useStoreActions(actions => actions.boats)
-    const [visible, setVisible] = useState(false)
+    const {setCurrentBoatsSpeed} = useStoreActions(actions => actions.boats)
     const [delay, setDelay] = useState(1000)
     const [isPlaying, setPlaying] = useState(false)
     const [wind, setWind] = useState(0)
 
-    const {isReady} = useStoreState(state => state.player)
-    const {setIsReady} = useStoreActions(actions => actions.player)
-    const mapRef = useRef(null)
+    const {isReady, visible} = useStoreState(state => state.player)
+    const {setIsReady, setVisible} = useStoreActions(actions => actions.player)
 
-    const [ListOfMarkers, setListOfMarkers] = useState([])
+    const { bouys, polyline } = useStoreState(state => state.bouys)
+    const { updateBouys, loadBouys } = useStoreActions(actions => actions.bouys)
 
-    let masslat = []
-    let masslng = []
-
-    ///////
-    const handleShowPlayer = (status) => setVisible(status);
 
     useEffect(() => {
+        loadBouys()
         if (boats.length > 0) {
             setCenter(boats[0].center)
             updateWindDirection()
@@ -160,89 +159,52 @@ export const MapContainer = ({center, setCenter, isOnline}) => {
         updateWindDirection()
     }, isPlaying ? delay : null)
 
-    const handleClick = (e) => {
-        const map = mapRef.current
-        if (!isPlacing || !map) {
-            return
-        }
-        const {latlng} = e
-        const clickedCoords = [latlng.lat, latlng.lng]
-        setStartLine(clickedCoords)
-    }
-
-    useEffect(() => {
-        const OnLoad = () => {
-            for (let i = 0; i < masslat.length; i++) {
-                console.log("sdfsdfdfdfd")
-                console.log(masslat[i], masslng[i])
-                setStartLine([masslat[i], masslng[i]]);
-
-                ListOfMarkers.push([masslat[i], masslng[i]])
-            }
-        }
-        /*fetch('http://localhost:8080/markers')
-            .then(res => res.json())
-            .then(arrayOfMarkers => {
-                masslat = arrayOfMarkers.lats
-                masslng = arrayOfMarkers.lngs
-
-                OnLoad()
-            })
-
-        */
-
-        const arrayOfMarkers = JSON.parse(localStorage.getItem('data'))
-        if (!arrayOfMarkers) return
-        masslat = arrayOfMarkers.lats
-        masslng = arrayOfMarkers.lngs
-
-        OnLoad()
-
-    }, [])
-
 
     const OnCreateSetBuiTitle = (id) => {
         if (id == 0) {
-            return ('port')
+            return ('Port')
         }
         if (id == 1) {
-            return ('starboard')
+            return ('Starboard')
         } else {
             return ('Marker' + (id-1))
         }
     }
-    ////////
+
+    const handleShowPlayer = (status) => {
+        setVisible(status)
+    }
+
     const handleDragEnd = (e) => {
         const {id} = e.target.options
         const latlng = e.target.getLatLng()
-        const coords = [latlng.lat, latlng.lng]
-        updateStartLine({id, coords})
+        bouys.lats[id] = latlng.lat
+        bouys.lngs[id] = latlng.lng
+        updateBouys(bouys)
     }
 
-    const markers = ListOfMarkers.length < 1 && ListOfMarkers !== null
+
+    const markers = bouys.length < 1 && bouys !== null
         ? null
         : (
             <>
-                {ListOfMarkers.map((marker, idx) => (
+                {bouys.lats.map((marker, idx) => (
                     <Marker
                         id={idx}
                         onDragEnd={handleDragEnd}
-                        position={marker}
+                        position={[marker, bouys.lngs[idx]]}
                         draggable={true}
                         key={`marker-${idx}`}
                         icon={PinIcon} >
                         <Popup>{OnCreateSetBuiTitle(idx)}</Popup>
                     </Marker>
                 ))}
-                <Polyline className={classes.polyline} color={'black'} positions={startLine}/>
             </>
         );
 
     return (
-        <div
-            onMouseEnter={isPlacing ? null : () => handleShowPlayer(true)}
-            onMouseLeave={isPlacing ? null : () => handleShowPlayer(false)}
-        >
+        <div onMouseEnter={() => handleShowPlayer(true)}
+             onMouseLeave={() => handleShowPlayer(false)}>
             <North/>
             <Wind wind={wind} isReady={isReady}/>
             <Map
@@ -252,16 +214,17 @@ export const MapContainer = ({center, setCenter, isOnline}) => {
                 boundsOptions={{padding: [25, 25]}}
                 zoom={13}
                 attributionControl={true}
-                zoomControl={true}
+                zoomControl={false}
                 doubleClickZoom={true}
                 scrollWheelZoom={true}
-                dragging={isPlacing ? false : true}
+                dragging={true}
                 animate={true}
                 easeLinearity={0.35}
-                ref={mapRef}
-                onClick={handleClick}
             >
+
+                <ZoomControl position="topright"/>
                 {markers}
+                <Polyline positions={polyline} />
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
@@ -278,7 +241,8 @@ export const MapContainer = ({center, setCenter, isOnline}) => {
                         <Polyline
                             className={classes.polyline}
                             color={boat.color}
-                            positions={boat.coords.slice(0, currentTime)}
+                            positions={needToSliceRoute?  boat.coords.slice(getFirstMarkerIndex(currentTime), currentTime) :
+                                boat.coords.slice(0, currentTime)}
                         />
                     </React.Fragment>
                 )}

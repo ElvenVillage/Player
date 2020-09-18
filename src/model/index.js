@@ -6,6 +6,7 @@ import classes from './classes'
 import player from './player'
 import headers from './headers'
 import online from "./online";
+import bouys from "./bouys";
 
 export default {
     url,
@@ -14,5 +15,6 @@ export default {
     classes,
     player,
     headers,
-    online
+    online,
+    bouys
 }

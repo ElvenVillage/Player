@@ -94,9 +94,12 @@ export const useStyles = makeStyles(theme => ({
   player: {
     position: 'fixed',
     zIndex: '999',
-    bottom: '0%',
-    padding: '0 45px',
-    margin: '80px 5%',
+    bottom: '60px',
+    maxHeight: '60px',
+    color: '#ffffff',
+    marginLeft: '40px',
+    marginRight: '40px',
+    backgroundColor: '#000000',
     textAlign: 'center'
   },
   northDiv: {
@@ -125,7 +128,7 @@ export const useStyles = makeStyles(theme => ({
     position: 'fixed',
     zIndex: '999',
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
     paddingLeft: '10px',
     
