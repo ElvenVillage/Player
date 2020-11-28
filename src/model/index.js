@@ -3,7 +3,6 @@ import url from './url'
 import file from './file'
 import boats from './boats'
 import classes from './classes'
-import player from './player'
 import headers from './headers'
 import online from "./online";
 import bouys from "./bouys";
@@ -13,7 +12,6 @@ export default {
     file,
     boats,
     classes,
-    player,
     headers,
     online,
     bouys

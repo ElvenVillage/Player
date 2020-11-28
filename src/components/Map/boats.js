@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {useStoreActions, useStoreState} from 'easy-peasy'
 import {
     Table,
@@ -7,21 +7,32 @@ import {
     TableBody,
     TableCell, Checkbox, Typography,
 } from '@material-ui/core'
+import {SketchPicker} from 'react-color'
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const defaultHeaders = ["#", "Имя лодки", "Цвет", "Текущая скорость"]
 
-export default function Boats({checked, setCenter}) {
-    const {boats} = useStoreState(state => state.boats)
-    const {currentTime, needToSliceRoute} = useStoreState(state => state.player)
+export default function Boats({checked}) {
+    const {boats, loadingFiles, progress} = useStoreState(state => state.boats)
+    const {currentTime, needToSliceRoute} = useStoreState(state => state.boats)
     const {selectedHeaders, headers} = useStoreState(state => state.headers)
     const {classes} = useStoreState(state => state.classes)
 
-    const {setNeedToSliceRoute} = useStoreActions(actions => actions.player)
+    const {setCenter, updateBoat} = useStoreActions(actions => actions.boats)
+    const {setNeedToSliceRoute} = useStoreActions(actions => actions.boats)
+    const [toggledIdx, setToggleIdx] = useState(-1)
 
     let boatsData = []
     const handleChangeBoat = (e) => {
         const id = e.currentTarget.id
         setCenter(boats[id].coords[0])
+    }
+
+    const handleColor = (id, color) => {
+        const nBoat = boats[id]
+        nBoat.color = color.hex
+        updateBoat({id: id, boat: nBoat})
+        setToggleIdx(-1)
     }
 
     const handleCheckbox = (e) => {
@@ -45,11 +56,14 @@ export default function Boats({checked, setCenter}) {
 
     if (!boats || boats.length === 0) return (<></>)
 
+
     return (
-        <> <Typography component="h4">
-            Укорачивать след от лодки
-            <Checkbox checked={needToSliceRoute} onChange={handleCheckbox}/>
-        </Typography>
+        <> {
+            (loadingFiles) ? <LinearProgress variant="determinate" value={progress}/> : <> </>}
+            <Typography component="h4">
+                Укорачивать след от лодки
+                <Checkbox checked={needToSliceRoute} onChange={handleCheckbox}/>
+            </Typography>
             <Table size="small">
                 {checked
                     ? <>
@@ -76,13 +90,23 @@ export default function Boats({checked, setCenter}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {boats.map(boat => (
+                            {boats.map((boat, idx) => (
                                 <TableRow className={classes.tableRow} style={{overflow: 'hidden'}} hover={true}
-                                          key={boats.indexOf(boat)} onClick={handleChangeBoat} id={boats.indexOf(boat)}>
+                                          key={idx} onClick={handleChangeBoat}
+                                          id={idx}>
                                     <TableCell>{boats.indexOf(boat) + 1}</TableCell>
                                     <TableCell>{boat.name}</TableCell>
                                     <TableCell>
-                                        <div className={classes.colorDiv} style={{backgroundColor: boat.color}}></div>
+                                        {(toggledIdx === idx) ?
+                                            <SketchPicker
+                                                className={classes.colorDiv}
+                                                color={boat.color}
+                                                onChangeComplete={(color) => handleColor(idx, color)}/> : <>
+                                                <div className={classes.colorDiv}
+                                                     style={{backgroundColor: boat.color}}
+                                                onClick={() => setToggleIdx(idx)}></div>
+                                            </>
+                                        }
                                     </TableCell>
                                     <TableCell>{boat.currentBoatSpeed}</TableCell>
                                 </TableRow>
@@ -91,6 +115,5 @@ export default function Boats({checked, setCenter}) {
                     </>
                 }
             </Table>
-        </>
-    );
+        </>)
 }

@@ -6,7 +6,7 @@ import {
     IconButton,
     Typography,
     Slider,
-    MenuItem, TextField
+    MenuItem, TextField, makeStyles
 } from '@material-ui/core';
 import {
     useStoreState
@@ -14,9 +14,10 @@ import {
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import StopIcon from '@material-ui/icons/Stop'
 import { options, formatNumberToHHMMSS } from '../../misc/handlers'
+import CustomizedInputs from "./darkTextField";
 
 
-const Player = ({visible, currentTime, endTime, isPlaying, setPlaying, setDelay, handleUpdateTime}) => {
+const Player = ({visible, currentTime, endTime, isPlaying, setPlaying, setDelay, handleUpdateTime, startTime}) => {
     const { classes } = useStoreState(state => state.classes)
     const [option, setOption] = useState(1000)
     const handleChange = (e) => {
@@ -29,38 +30,28 @@ const Player = ({visible, currentTime, endTime, isPlaying, setPlaying, setDelay,
     return (
         <Fade timeout={1000} in={visible}>
             <div className={classes.player} id="player-div">
-                <table><tr><td style={{width: '25px'}}>
+                <table><tr><td style={{width: '25px', paddingBottom: '12px'}}>
             {(!isPlaying)? (<IconButton onClick={() => handlePlayControl(true)}>
                 <PlayArrowIcon color={"primary"}/>
             </IconButton>): (<IconButton onClick={() => handlePlayControl(false)}>
                 <StopIcon color={"primary"}/>
             </IconButton>)
-            }</td><td style={{width: '55px'}}>
+            }</td><td style={{width: '55px', paddingBottom: '12px'}}>
             <Typography variant="caption">
                 Скорость
             </Typography>
-                </td><td style={{width: '55px'}}>
-            <TextField
-                select
+                </td><td style={{width: '55px', paddingBottom: '12px'}}>
+            <CustomizedInputs
+                options={options}
                 value={option}
-                variant={'filled'}
-                color={'primary'}
-                defaultValue={option}
-                inputProps={{style: {color: 'primary'}}}
-                onChange={handleChange}
+                handleChange={handleChange}
                 style={{width: 'auto'}}
-            >
-            {options.map(option => (
-                <MenuItem key={option.value} value={option.value} style={{backgroundColor: 'black', color: 'white'}}>
-                {option.label}
-                </MenuItem>
-            ))}
-            </TextField>
+            />
                 </td><td style={{width: '600px'}}>
             <Slider
                 value={currentTime}
                 onChange={handleUpdateTime}
-                min={0}
+                min={startTime}
                 style={{marginTop: "15px"}}
                 max={endTime || -1}
                 getAriaValueText={formatNumberToHHMMSS}
@@ -69,7 +60,7 @@ const Player = ({visible, currentTime, endTime, isPlaying, setPlaying, setDelay,
                     {value: endTime || -1, label: formatNumberToHHMMSS(endTime || 0)}
                 ]}
             /></td>
-                <td>
+                <td style={{paddingBottom: '15px'}}>
                     <Typography variant={"caption"} style={{width: '50px'}}>
                         {formatNumberToHHMMSS(currentTime)}
                     </Typography>

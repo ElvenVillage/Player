@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import Boats from './boats'
 import Map from './map'
 import FabWrapper from './fabwrapper'
@@ -9,7 +9,7 @@ export const MapPage = () => {
 
     const {classes} = useStoreState(state => state.classes)
     const [checked, setChecked] = useState(false)
-    const [center, setCenter] = useState([0, 0])
+    const {center} = useStoreState(state => state.boats)
 
     const handleCheckbox = () => setChecked(!checked)
 
@@ -23,7 +23,7 @@ export const MapPage = () => {
                                 <Typography component="h2" variant="h6" gutterBottom>
                                     Карта
                                 </Typography>
-                                <Map center={center} setCenter={setCenter} isOnline={false}/>
+                                <Map center={center} isOnline={false}/>
                             </Paper>
                         </Grid>
                         <Grid item xs={4}>
@@ -35,7 +35,7 @@ export const MapPage = () => {
                                     Показать все столбцы
                                     <Checkbox checked={checked} onChange={handleCheckbox}/>
                                 </Typography>
-                                <Boats checked={checked} setCenter={setCenter}/>
+                                <Boats checked={checked}/>
                             </Paper>
                         </Grid>
                     </Grid>

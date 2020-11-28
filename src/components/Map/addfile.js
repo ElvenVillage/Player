@@ -40,7 +40,7 @@ export const AddFile = () => {
 
   return (
   <>
-  <AddBoat open={open} setOpen={setOpen} data={data}  url={false} setData={setData} />
+  <AddBoat open={open} setOpen={setOpen} data={data}  url={false}/>
   <ShowError showError={errorFile} setShowError={setErrorFile} />
   <input
       id="input-file"

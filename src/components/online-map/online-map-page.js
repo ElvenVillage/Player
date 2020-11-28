@@ -10,14 +10,13 @@ export const OnlineMapPage = () => {
 
     const {classes} = useStoreState(state => state.classes)
     const [checked, setChecked] = useState(false)
-    const [center, setCenter] = useState([0, 0])
 
     const {setStarted, updateLastSeemed} = useStoreActions(actions => actions.online)
     const {setupBoat, appendDataToBoat} = useStoreActions(actions => actions.boats)
     const {setHeaders} = useStoreActions(actions => actions.headers)
-    const {updatePlayer} = useStoreActions(actions => actions.player)
+    const {updatePlayer} = useStoreActions(actions => actions.boats)
 
-    const {endTime} = useStoreState(state => state.player)
+    const {endTime} = useStoreState(state => state.boats)
 
     const {lastSeemed} = useStoreState(state => state.online)
 
@@ -121,7 +120,7 @@ export const OnlineMapPage = () => {
                                 <Typography component="h2" variant="h6" gutterBottom>
                                     Карта
                                 </Typography>
-                                <Map center={center} setCenter={setCenter} isOnline={true}/>
+                                <Map isOnline={true}/>
                             </Paper>
                         </Grid>
                         <Grid item xs={4}>
@@ -133,7 +132,7 @@ export const OnlineMapPage = () => {
                                     Показать все столбцы
                                     <Checkbox checked={checked} onChange={handleCheckbox}/>
                                 </Typography>
-                                <Boats checked={checked} setCenter={setCenter}/>
+                                <Boats checked={checked}/>
                             </Paper>
                         </Grid>
                     </Grid>

@@ -16,10 +16,13 @@ import PaletteIcon from '@material-ui/icons/Palette'
 import {handleProcessData} from "./handlers"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
+import {convertBoatTimeToUTC} from "./timeservice";
 
-const AddBoat = ({open, setOpen, data, url, setData}) => {
-    const {setupBoat} = useStoreActions(actions => actions.boats)
-    const {updatePlayer, setIsReady} = useStoreActions(actions => actions.player)
+
+const AddBoat = ({open, setOpen, data, url}) => {
+    const {setupBoat, setCountOfBoats, setCenter} = useStoreActions(actions => actions.boats)
+    const {boats} = useStoreState(state => state.boats)
+    const {updatePlayer, setIsReady, setCurrentTime} = useStoreActions(actions => actions.boats)
     const {setHeaders} = useStoreActions(actions => actions.headers)
     const {classes} = useStoreState(state => state.classes)
     const [color, setColor] = useState("#000")
@@ -30,6 +33,19 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
 
     const [listOfUrls, setListOfUrls] = useState([])
     const [chosenUrl, setChosenUrl] = useState(-1)
+
+    function findGetParameter(parameterName) {
+        let result = null,
+            tmp = [];
+        window.location.search
+            .substr(1)
+            .split("&")
+            .forEach(function (item) {
+                tmp = item.split("=");
+                if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            });
+        return result;
+    }
 
     const cleanState = () => {
         setOpen(false)
@@ -43,30 +59,56 @@ const AddBoat = ({open, setOpen, data, url, setData}) => {
         cleanState()
     }
 
-    function setNewBoat(data) {
+    function setNewBoat(data, name = undefined) {
         setHeaders(data.headers)
         const {obj, player} = data
-        obj.name = text
+
+        obj.name = (name) ? name : text
         obj.color = color
+        convertBoatTimeToUTC(obj)
+        player.endTime = obj.data[player.endTime].UTC
+        player.startTime = obj.data[0].UTC
+
+        if (boats.length === 0) {
+            setCurrentTime(obj.data[0].UTC)
+        }
+
         setupBoat(obj)
         updatePlayer(player)
 
         if (obj.data[0].AWA != -1) setIsReady(true)
+        setCenter([obj.data[0].LAT, obj.data[0].LON])
         cleanState()
     }
 
-    const downloadFileList = async () => {
-        const response = await fetch('/files/get_names.php')
-        try {
-            const json = await response.json()
-            setListOfUrls(json)
-        } catch (e) {
-            setListOfUrls([])
-        }
-    }
-
     useEffect(() => {
-        downloadFileList()
+        const downloadFileList = () => {
+            const rid = findGetParameter('race')
+            if (!rid) {
+                fetch('/files/get_names.php')
+                    .then(response => response.json())
+                    .then(json => setListOfUrls(json))
+                    .catch(e => setListOfUrls([]))
+            } else {
+                fetch(`/api/show_offline_race_files.php?rid=${rid}`)
+                    .then(response => response.json())
+                    .then(json => {
+                        //setListOfUrls(json)
+                        setCountOfBoats(json.length)
+                        for (let i = 0; i < json.length; i++) {
+                            //if (boats.boats.filter(boat => boat.id == json[i].id).length != 0) return
+                            handleProcessData(`/files/get.php?fid=${json[i].fid}`, (data) => {
+                                if (data) {
+                                    data.color = '#000000'
+                                    setNewBoat(data, json[i].fid)
+                                }
+                            })
+                        }
+                    }).catch(e => setListOfUrls([]))
+            }
+        }
+        if (url)
+            downloadFileList()
     }, [])
 
     const handleConfirmation = useCallback(() => {

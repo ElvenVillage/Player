@@ -1,46 +1,49 @@
 import React, {useState, useEffect, useRef} from 'react'
 import {Map, Marker, TileLayer, Polyline, ScaleControl, Popup, ZoomControl} from 'react-leaflet'
 import {useStoreState, useStoreActions} from 'easy-peasy'
-import {useInterval, calculateAngle} from '../../misc/handlers'
+import {calculateAngle} from '../../misc/handlers'
 import Wind from './wind'
 import North from './north'
 import Player from './player'
 import {CustomMarker, PinIcon} from '../../misc/graphics';
+import {sliceRouteByUTC} from "../../misc/timeservice";
 
 const getFirstMarkerIndex = (currentTime) => {
-    return (currentTime >= 50)? currentTime - 50 : 0
+    return (currentTime >= 50) ? currentTime - 50 : 0
 }
 
-export const MapContainer = ({center, setCenter, isOnline}) => {
-    const {endTime, currentTime, needToSliceRoute} = useStoreState(state => state.player)
+export const MapContainer = ({isOnline}) => {
+    const {endTime, currentTime, needToSliceRoute, startTime} = useStoreState(state => state.boats)
     const {classes} = useStoreState(state => state.classes)
-    const {boats} = useStoreState(state => state.boats)
-    const {setCurrentTime} = useStoreActions(actions => actions.player)
-    const {setCurrentBoatsSpeed} = useStoreActions(actions => actions.boats)
-    const [delay, setDelay] = useState(1000)
+    const {boats, center} = useStoreState(state => state.boats)
+    const {setCurrentTime} = useStoreActions(actions => actions.boats)
+    const {setCurrentBoatsSpeed, setCenter} = useStoreActions(actions => actions.boats)
+    const [delay, setDelay] = useState(100)
     const [isPlaying, setPlaying] = useState(false)
     const [wind, setWind] = useState(0)
 
-    const {isReady, visible} = useStoreState(state => state.player)
-    const {setIsReady, setVisible} = useStoreActions(actions => actions.player)
+    const {isReady, visible} = useStoreState(state => state.boats)
+    const {setIsReady, setVisible} = useStoreActions(actions => actions.boats)
 
-    const { bouys, polyline } = useStoreState(state => state.bouys)
-    const { updateBouys, loadBouys } = useStoreActions(actions => actions.bouys)
+    const {bouys, polyline} = useStoreState(state => state.bouys)
+    const {updateBouys, loadBouys} = useStoreActions(actions => actions.bouys)
 
 
     useEffect(() => {
         loadBouys()
         if (boats.length > 0) {
-            setCenter(boats[0].center)
+            setCenter([boats[0].data[0].LAT, boats[0].data[0].LON])
+            setCurrentTime(boats[0].data[0].UTC)
             updateWindDirection()
         }
         updateDivs()
-    }, [])
+    }, [boats.length])
 
     useEffect(() => {
         updateDivs()
         window.addEventListener('resize', updateDivs)
-    });
+    }, []);
+
 
     const updateWindDirection = () => {
         let windDirection = 0
@@ -143,21 +146,30 @@ export const MapContainer = ({center, setCenter, isOnline}) => {
     }
 
     const handleUpdateTime = (e, val) => {
-        setCurrentTime(val)
-        updateSpeed(val)
-        updateWindDirection()
+        setPlaying(false)
+
+        setTimeout(() => {
+                setCurrentTime(val)
+                updateSpeed(val)
+                updateWindDirection()
+            }
+        ,200)
     }
 
-    useInterval(() => {
-        if (currentTime >= endTime - 1) {
-            setCurrentTime(endTime)
-            if (!isOnline)
-                setPlaying(false)
-        }
-        setCurrentTime(currentTime + 1)
-        updateSpeed()
-        updateWindDirection()
-    }, isPlaying ? delay : null)
+    useEffect(() => {
+        setTimeout(() => {
+            if (currentTime >= endTime - 1) {
+                setCurrentTime(endTime)
+                if (!isOnline)
+                    setPlaying(false)
+            }
+            if (isPlaying) {
+                setCurrentTime(currentTime + delay)
+                updateSpeed()
+                updateWindDirection()
+            }
+        }, isPlaying ? 200 : null)
+    }, [currentTime, isPlaying, delay])
 
 
     const OnCreateSetBuiTitle = (id) => {
@@ -167,7 +179,7 @@ export const MapContainer = ({center, setCenter, isOnline}) => {
         if (id == 1) {
             return ('Starboard')
         } else {
-            return ('Marker' + (id-1))
+            return ('Marker' + (id - 1))
         }
     }
 
@@ -195,7 +207,7 @@ export const MapContainer = ({center, setCenter, isOnline}) => {
                         position={[marker, bouys.lngs[idx]]}
                         draggable={true}
                         key={`marker-${idx}`}
-                        icon={PinIcon} >
+                        icon={PinIcon}>
                         <Popup>{OnCreateSetBuiTitle(idx)}</Popup>
                     </Marker>
                 ))}
@@ -224,27 +236,27 @@ export const MapContainer = ({center, setCenter, isOnline}) => {
 
                 <ZoomControl position="topright"/>
                 {markers}
-                <Polyline positions={polyline} />
+                <Polyline positions={polyline}/>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
                 />
                 <ScaleControl position="bottomleft"/>
                 {boats.length > 0 && boats.map((boat, idx) =>
-                    <React.Fragment key={idx}>
-                        <CustomMarker
-                            prevPos={currentTime === 0 ? boat.coords[0] : boat.coords.length > currentTime ? boat.coords[currentTime - 1] : boat.coords[boat.coords.length - 1]}
-                            position={boat.coords.length > currentTime ? boat.coords[currentTime] : boat.coords[boat.coords.length - 1]}
-                            color={boat.color}
-                            draggable={false}
-                        />
-                        <Polyline
-                            className={classes.polyline}
-                            color={boat.color}
-                            positions={needToSliceRoute?  boat.coords.slice(getFirstMarkerIndex(currentTime), currentTime) :
-                                boat.coords.slice(0, currentTime)}
-                        />
-                    </React.Fragment>
+                    (boat.currentBoatCoords) ? (
+                        <React.Fragment key={idx}>
+                            <CustomMarker
+                                prevPos={boat.currentBoatCoords}
+                                position={boat.currentBoatCoords}
+                                color={boat.color}
+                                draggable={false}
+                            />
+                            <Polyline
+                                className={classes.polyline}
+                                color={boat.color}
+                                positions={sliceRouteByUTC(boat, startTime, currentTime)}
+                            />
+                        </React.Fragment>) : <></>
                 )}
             </Map>
             <Player
@@ -255,6 +267,7 @@ export const MapContainer = ({center, setCenter, isOnline}) => {
                 setPlaying={setPlaying}
                 setDelay={setDelay}
                 handleUpdateTime={handleUpdateTime}
+                startTime={startTime}
             />
         </div>
     );

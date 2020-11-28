@@ -54,7 +54,6 @@ export function filterData({data}, callback) {
         name: "",
         color: "#000",
         currentBoatSpeed: 0.0,
-        currentBoatCoords: [],
         coords: [],
         data: [],
         center: []
@@ -87,7 +86,7 @@ export function filterData({data}, callback) {
     // calculation of speed down to .00 precision
     obj.speed = Math.round(filteredData[0].SOG * 100) / 100;
     obj.coords = coords;
-    obj.currentBoatCoords = coords[0];
+    obj.currentBoatCoords = coords[0]
     obj.currentBoatSpeed = obj.speed;
     obj.center = [avgLat, avgLon];
     obj.data = filteredData;
@@ -100,24 +99,6 @@ export function filterData({data}, callback) {
     data = null;
     callback({obj, headers, player});
 }
-
-export function useInterval(callback, delay) {
-    const savedCallback = useRef();
-  
-    useEffect(() => {
-      savedCallback.current = callback;
-    }, [callback]);
-  
-    useEffect(() => {
-      function tick() {
-        savedCallback.current();
-      }
-      if (delay !== null) {
-        let id = setInterval(tick, delay);
-        return () => clearInterval(id);
-      }
-    }, [delay]);
-  }
 
 export const options = [
     {
@@ -147,19 +128,6 @@ export const options = [
   ];
 
 export function formatNumberToHHMMSS(number) {
-    const sec_num = parseInt(number, 10);
-    let hours   = Math.floor(sec_num / 3600);
-    let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-    let seconds = sec_num - (hours * 3600) - (minutes * 60);
-  
-    if (hours < 10) {
-      hours = "0"+hours;
-    }
-    if (minutes < 10) {
-      minutes = "0"+minutes;
-    }
-    if (seconds < 10) {
-      seconds = "0"+seconds;
-    }
-    return hours+':'+minutes+':'+seconds;
-  }
+    const dt = new Date(number)
+    return dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds()
+}
