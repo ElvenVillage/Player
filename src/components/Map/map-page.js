@@ -8,10 +8,8 @@ import { useStoreState } from 'easy-peasy'
 export const MapPage = () => {
 
     const {classes} = useStoreState(state => state.classes)
-    const [checked, setChecked] = useState(false)
     const {center} = useStoreState(state => state.boats)
 
-    const handleCheckbox = () => setChecked(!checked)
 
     return (
         <Container maxWidth="xl" className={classes.mapContainer}>
@@ -33,9 +31,8 @@ export const MapPage = () => {
                                 </Typography>
                                 <Typography variant="subtitle1" style={{display: "inline"}}>
                                     Показать все столбцы
-                                    <Checkbox checked={checked} onChange={handleCheckbox}/>
                                 </Typography>
-                                <Boats checked={checked}/>
+                                <Boats/>
                             </Paper>
                         </Grid>
                     </Grid>

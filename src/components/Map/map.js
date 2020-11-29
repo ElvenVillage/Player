@@ -6,10 +6,10 @@ import Wind from './wind'
 import North from './north'
 import Player from './player'
 import {CustomMarker, PinIcon} from '../../misc/graphics';
-import {sliceRouteByUTC} from "../../misc/timeservice";
+import {AWAonTime, HDGonTime, sliceRouteByUTC} from "../../misc/timeservice";
 
-const getFirstMarkerIndex = (currentTime) => {
-    return (currentTime >= 50) ? currentTime - 50 : 0
+const getFirstMarkerIndex = (currentTime, startTime) => {
+    return (currentTime - startTime >= 50000) ? currentTime - 50000 : 0
 }
 
 export const MapContainer = ({isOnline}) => {
@@ -42,7 +42,7 @@ export const MapContainer = ({isOnline}) => {
     useEffect(() => {
         updateDivs()
         window.addEventListener('resize', updateDivs)
-    }, []);
+    }, [currentTime, boats]);
 
 
     const updateWindDirection = () => {
@@ -51,14 +51,14 @@ export const MapContainer = ({isOnline}) => {
 
         boats.forEach(boat => {
             if (boat.data.length > currentTime) {
-                if ((boat.data[currentTime].AWA != -1) && (!wasCouchViewed)) {
-                    windDirection += boat.data[currentTime].AWA
+                if ((AWAonTime(boat, currentTime) != -1) && (!wasCouchViewed)) {
+                    windDirection += AWAonTime(boat, currentTime)
                     wasCouchViewed = true
                     setIsReady(true)
                 }
             } else {
-                if ((boat.data[boat.data.length - 1].AWA != -1) && (!wasCouchViewed)) {
-                    windDirection += boat.data[boat.data.length - 1].AWA
+                if ((AWAonTime(boat, currentTime) != -1) && (!wasCouchViewed)) {
+                    windDirection += AWAonTime(boat, currentTime)
                     wasCouchViewed = true
                     setIsReady(true)
                 }
@@ -105,20 +105,14 @@ export const MapContainer = ({isOnline}) => {
     const updateBoatsAngle = () => {
         const boatDivs = document.getElementsByClassName('boat-div')
         if (!boatDivs || boatDivs.length === 0) return
-        boats.forEach((boat, index) => {
+        for (let index = 0; index < boatDivs.length; index++) {
             const [svgChild] = [...boatDivs[index].childNodes].filter(child => child.nodeName === 'svg')
-            let pos1, pos2 = []
-            if (currentTime === 0) {
-                pos1 = pos2 = boat.coords[0]
-            } else {
-                let coordsLen = boat.coords.length - 1
-                pos1 = currentTime > coordsLen ? boat.coords[coordsLen] : boat.coords[currentTime - 1]
-                pos2 = currentTime > coordsLen ? boat.coords[coordsLen] : boat.coords[currentTime]
-            }
-            let angle = calculateAngle(pos1, pos2)
+
+            let angle = HDGonTime(boats[index], currentTime)
+
             svgChild.style.transform = `rotate(${angle}deg)`
-            svgChild.childNodes[3].style.fill = boat.color
-        });
+            svgChild.childNodes[3].style.fill = boats[index].color
+        }
     }
 
     const updateDivs = () => {
@@ -246,7 +240,6 @@ export const MapContainer = ({isOnline}) => {
                     (boat.currentBoatCoords) ? (
                         <React.Fragment key={idx}>
                             <CustomMarker
-                                prevPos={boat.currentBoatCoords}
                                 position={boat.currentBoatCoords}
                                 color={boat.color}
                                 draggable={false}
@@ -254,7 +247,7 @@ export const MapContainer = ({isOnline}) => {
                             <Polyline
                                 className={classes.polyline}
                                 color={boat.color}
-                                positions={sliceRouteByUTC(boat, startTime, currentTime)}
+                                positions={(needToSliceRoute)?  sliceRouteByUTC(boat, getFirstMarkerIndex(currentTime, startTime), currentTime) : sliceRouteByUTC(boat, startTime, currentTime)}
                             />
                         </React.Fragment>) : <></>
                 )}

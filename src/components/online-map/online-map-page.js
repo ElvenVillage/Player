@@ -9,7 +9,6 @@ import {filterData} from "../../misc/handlers";
 export const OnlineMapPage = () => {
 
     const {classes} = useStoreState(state => state.classes)
-    const [checked, setChecked] = useState(false)
 
     const {setStarted, updateLastSeemed} = useStoreActions(actions => actions.online)
     const {setupBoat, appendDataToBoat} = useStoreActions(actions => actions.boats)
@@ -20,7 +19,6 @@ export const OnlineMapPage = () => {
 
     const {lastSeemed} = useStoreState(state => state.online)
 
-    const handleCheckbox = () => setChecked(!checked)
     const [boats, setBoats] = useState([])
 
     const getLastId = (array) => {
@@ -130,9 +128,9 @@ export const OnlineMapPage = () => {
                                 </Typography>
                                 <Typography variant="subtitle1" style={{display: "inline"}}>
                                     Показать все столбцы
-                                    <Checkbox checked={checked} onChange={handleCheckbox}/>
+
                                 </Typography>
-                                <Boats checked={checked}/>
+                                <Boats/>
                             </Paper>
                         </Grid>
                     </Grid>

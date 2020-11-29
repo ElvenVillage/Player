@@ -178,14 +178,6 @@ const AddBoat = ({open, setOpen, data, url}) => {
                                 )
                             }) : <></>}
                         </List>
-                        <TextField
-                            required
-                            margin="dense"
-                            label="URL"
-                            onChange={(e) => {
-                                setUrlString(e.currentTarget.value)
-                            }}
-                        />
                     </> : ""
                 }
                 <>

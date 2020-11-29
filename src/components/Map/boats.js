@@ -10,9 +10,9 @@ import {
 import {SketchPicker} from 'react-color'
 import LinearProgress from "@material-ui/core/LinearProgress";
 
-const defaultHeaders = ["#", "Имя лодки", "Цвет", "Текущая скорость"]
+const defaultHeaders = ["#", "Имя лодки", "Цвет"]
 
-export default function Boats({checked}) {
+export default function Boats() {
     const {boats, loadingFiles, progress} = useStoreState(state => state.boats)
     const {currentTime, needToSliceRoute} = useStoreState(state => state.boats)
     const {selectedHeaders, headers} = useStoreState(state => state.headers)
@@ -64,56 +64,42 @@ export default function Boats({checked}) {
                 Укорачивать след от лодки
                 <Checkbox checked={needToSliceRoute} onChange={handleCheckbox}/>
             </Typography>
-            <Table size="small">
-                {checked
-                    ? <>
-                        <TableHead>
-                            <TableRow>
-                                {selectedHeaders.map(header => <TableCell
-                                    key={selectedHeaders.indexOf(header)}>{header}</TableCell>)}
+            <Table size="small" style={{overflow: "hidden", width: '100%н'}}>
+                <>
+                    <TableHead>
+                        <TableRow>
+                            {defaultHeaders.map(header => <TableCell
+                                key={defaultHeaders.indexOf(header)}>{header}</TableCell>)}
+                            {selectedHeaders.map(header => <TableCell
+                                key={selectedHeaders.indexOf(header)}>{header}</TableCell>)}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {boats.map((boat, idx) => (
+                            <TableRow className={classes.tableRow} style={{overflow: 'hidden'}} hover={true}
+                                      key={idx} onClick={handleChangeBoat}
+                                      id={idx}>
+                                <TableCell>{boats.indexOf(boat) + 1}</TableCell>
+                                <TableCell>{boat.name}</TableCell>
+                                <TableCell>
+                                    {(toggledIdx === idx) ?
+                                        <SketchPicker
+                                            className={classes.colorDiv}
+                                            color={boat.color}
+                                            onChangeComplete={(color) => handleColor(idx, color)}/> : <>
+                                            <div className={classes.colorDiv}
+                                                 style={{backgroundColor: boat.color}}
+                                                 onClick={() => setToggleIdx(idx)}></div>
+                                        </>
+                                    }
+                                </TableCell>
+                                {boatsData.length > 0 && boatsData.map(boat => (
+                                    boat.map((val, index) => <TableCell key={index}>{val}</TableCell>)
+                                ))}
                             </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {boatsData.length > 0 && boatsData.map(boat => (
-                                <TableRow className={classes.tableRow} hover={true} key={boatsData.indexOf(boat)}
-                                          onClick={handleChangeBoat} id={boatsData.indexOf(boat)}>
-                                    {boat.map((val, index) => <TableCell key={index}>{val}</TableCell>)}
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </>
-                    : <>
-                        <TableHead>
-                            <TableRow>
-                                {defaultHeaders.map(header => <TableCell
-                                    key={defaultHeaders.indexOf(header)}>{header}</TableCell>)}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {boats.map((boat, idx) => (
-                                <TableRow className={classes.tableRow} style={{overflow: 'hidden'}} hover={true}
-                                          key={idx} onClick={handleChangeBoat}
-                                          id={idx}>
-                                    <TableCell>{boats.indexOf(boat) + 1}</TableCell>
-                                    <TableCell>{boat.name}</TableCell>
-                                    <TableCell>
-                                        {(toggledIdx === idx) ?
-                                            <SketchPicker
-                                                className={classes.colorDiv}
-                                                color={boat.color}
-                                                onChangeComplete={(color) => handleColor(idx, color)}/> : <>
-                                                <div className={classes.colorDiv}
-                                                     style={{backgroundColor: boat.color}}
-                                                onClick={() => setToggleIdx(idx)}></div>
-                                            </>
-                                        }
-                                    </TableCell>
-                                    <TableCell>{boat.currentBoatSpeed}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </>
-                }
+                        ))}
+                    </TableBody>
+                </>
             </Table>
         </>)
 }
