@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useStoreActions, useStoreState} from 'easy-peasy'
 import {
     Table,
@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core'
 import {SketchPicker} from 'react-color'
 import LinearProgress from "@material-ui/core/LinearProgress";
+import {AllOnTime} from "../../misc/timeservice";
 
 const defaultHeaders = ["#", "Имя лодки", "Цвет"]
 
@@ -22,7 +23,6 @@ export default function Boats() {
     const {setNeedToSliceRoute} = useStoreActions(actions => actions.boats)
     const [toggledIdx, setToggleIdx] = useState(-1)
 
-    let boatsData = []
     const handleChangeBoat = (e) => {
         const id = e.currentTarget.id
         setCenter(boats[id].coords[0])
@@ -37,21 +37,6 @@ export default function Boats() {
 
     const handleCheckbox = (e) => {
         setNeedToSliceRoute(e.target.checked)
-    }
-
-    if (currentTime !== null) {
-        boats.forEach(boat => {
-            const curData = boat.data
-            if (curData.length - 1 > currentTime) {
-                boatsData.push(Object.values(curData[currentTime]).slice(4).filter((cell, idx) => {
-                    return (selectedHeaders.includes(headers[idx]))
-                }))
-            } else {
-                boatsData.push(Object.values(curData[curData.length - 1]).slice(4).filter((cell, idx) => {
-                    return (selectedHeaders.includes(headers[idx]))
-                }))
-            }
-        })
     }
 
     if (!boats || boats.length === 0) return (<></>)
@@ -93,9 +78,14 @@ export default function Boats() {
                                         </>
                                     }
                                 </TableCell>
-                                {boatsData.length > 0 && boatsData.map(boat => (
-                                    boat.map((val, index) => <TableCell key={index}>{val}</TableCell>)
-                                ))}
+
+                                {(AllOnTime(boat, currentTime)) ?
+                                    Object.values(AllOnTime(boat, currentTime)).slice(4).filter((_, idex) => {
+                                        return selectedHeaders.includes(headers[idex])
+                                    }).map(r => {
+                                        return <TableCell>{r}</TableCell>
+                                    }) :
+                                    <></>}
                             </TableRow>
                         ))}
                     </TableBody>

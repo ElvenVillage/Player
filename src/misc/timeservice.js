@@ -22,6 +22,14 @@ export function AWAonTime(boat, currentTime) {
     }
 }
 
+export function AllOnTime(boat, currentTime) {
+    for (let i = 1; i < boat.data.length; i++) {
+        if ((boat.data[i-1].UTC <= currentTime) && (boat.data[i].UTC >= currentTime)) {
+            return boat.data[i];
+        }
+    }
+}
+
 export function sliceRouteByUTC(boat, startUTC, endUTC) {
     let i = 0; let j = 0;
     let startFlag = false
