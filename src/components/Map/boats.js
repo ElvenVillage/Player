@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import {useStoreActions, useStoreState} from 'easy-peasy'
 import {
     Table,
@@ -7,7 +7,7 @@ import {
     TableBody,
     TableCell, Checkbox, Typography,
 } from '@material-ui/core'
-import {SketchPicker} from 'react-color'
+import {ColorPicker} from 'material-ui-color'
 import LinearProgress from "@material-ui/core/LinearProgress";
 import {AllOnTime} from "../../misc/timeservice";
 
@@ -19,21 +19,19 @@ export default function Boats() {
     const {selectedHeaders, headers} = useStoreState(state => state.headers)
     const {classes} = useStoreState(state => state.classes)
 
-    const {setCenter, updateBoat} = useStoreActions(actions => actions.boats)
+    const {setCenter, updateBoatColor} = useStoreActions(actions => actions.boats)
     const {setNeedToSliceRoute} = useStoreActions(actions => actions.boats)
-    const [toggledIdx, setToggleIdx] = useState(-1)
 
     const handleChangeBoat = (e) => {
         const id = e.currentTarget.id
         setCenter(boats[id].coords[0])
     }
 
-    const handleColor = (id, color) => {
-        const nBoat = boats[id]
-        nBoat.color = color.hex
-        updateBoat({id: id, boat: nBoat})
-        setToggleIdx(-1)
-    }
+    // const handleColor = (id, color) => {
+    //     const nBoat = boats[id]
+    //     nBoat.color = color.hex
+    //     updateBoat({id: id, boat: nBoat})
+    // }
 
     const handleCheckbox = (e) => {
         setNeedToSliceRoute(e.target.checked)
@@ -67,16 +65,11 @@ export default function Boats() {
                                 <TableCell>{boats.indexOf(boat) + 1}</TableCell>
                                 <TableCell>{boat.name}</TableCell>
                                 <TableCell>
-                                    {(toggledIdx === idx) ?
-                                        <SketchPicker
-                                            className={classes.colorDiv}
-                                            color={boat.color}
-                                            onChangeComplete={(color) => handleColor(idx, color)}/> : <>
-                                            <div className={classes.colorDiv}
-                                                 style={{backgroundColor: boat.color}}
-                                                 onClick={() => setToggleIdx(idx)}></div>
-                                        </>
-                                    }
+                                    <ColorPicker value={boat.color} hideTextfield disableAlpha
+                                    onChange={(color) => {
+                                        updateBoatColor({id: idx, color: color})
+                                        //alert(boat.color)
+                                    }}/>
                                 </TableCell>
 
                                 {(AllOnTime(boat, currentTime)) ?

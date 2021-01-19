@@ -26,6 +26,10 @@ export default {
         const {id} = payload;
         state.boats[id] = payload.boat;
     }),
+    updateBoatColor: action((state, payload) => {
+       const {id} = payload;
+       state.boats[id].color = payload.color.css.backgroundColor;
+    }),
     center: [0, 0],
     setCenter: action((state, payload) => {
        state.center = payload
