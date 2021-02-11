@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
     Fab,
     Dialog,
@@ -9,22 +9,27 @@ import {
     DialogActions,
     DialogContentText, List, ListItemAvatar,
 } from '@material-ui/core'
-import {useStoreActions, useStoreState} from 'easy-peasy'
+import { useStoreActions, useStoreState } from 'easy-peasy'
 
 import CirclePicker from 'react-color'
 import PaletteIcon from '@material-ui/icons/Palette'
-import {handleProcessData} from "./handlers"
+import { handleProcessData } from "../../misc/handlers"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
-import {convertBoatTimeToUTC} from "./timeservice";
+import { convertBoatTimeToUTC } from "../../misc/timeservice"
+import {findGetParameter} from '../../misc/handlers'
 
+/*
+* Модальное окно для настройки отображения лог-файла лодки.
+* Задает параметры цвета, имени.
+*/
 
-const AddBoat = ({open, setOpen, data, url}) => {
-    const {setupBoat, setCountOfBoats, setCenter} = useStoreActions(actions => actions.boats)
-    const {boats} = useStoreState(state => state.boats)
-    const {updatePlayer, setIsReady, setCurrentTime} = useStoreActions(actions => actions.boats)
-    const {setHeaders} = useStoreActions(actions => actions.headers)
-    const {classes} = useStoreState(state => state.classes)
+const AddBoat = ({ open, setOpen, data, url }) => {
+    const { setupBoat, setCountOfBoats, setCenter } = useStoreActions(actions => actions.boats)
+    const { boats } = useStoreState(state => state.boats)
+    const { updatePlayer, setIsReady, setCurrentTime } = useStoreActions(actions => actions.boats)
+    const { setHeaders } = useStoreActions(actions => actions.headers)
+    const { classes } = useStoreState(state => state.classes)
     const [color, setColor] = useState("#000")
     const [urlString, setUrlString] = useState("")
     const [error, setError] = useState("")
@@ -34,18 +39,7 @@ const AddBoat = ({open, setOpen, data, url}) => {
     const [listOfUrls, setListOfUrls] = useState([])
     const [chosenUrl, setChosenUrl] = useState(-1)
 
-    function findGetParameter(parameterName) {
-        let result = null,
-            tmp = [];
-        window.location.search
-            .substr(1)
-            .split("&")
-            .forEach(function (item) {
-                tmp = item.split("=");
-                if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-            });
-        return result;
-    }
+    
 
     const cleanState = () => {
         setOpen(false)
@@ -59,9 +53,13 @@ const AddBoat = ({open, setOpen, data, url}) => {
         cleanState()
     }
 
+    /*Заполняет объект лодки на основе данных из data (результат парсинга)
+    и собственного state компонента (выбор пользователя в диалоге)
+    */
+
     function setNewBoat(data, name = undefined) {
         setHeaders(data.headers)
-        const {obj, player} = data
+        const { obj, player } = data
 
         obj.name = (name) ? name : text
         obj.color = color
@@ -80,6 +78,15 @@ const AddBoat = ({open, setOpen, data, url}) => {
         setCenter([obj.data[0].LAT, obj.data[0].LON])
         cleanState()
     }
+
+    /*
+    Этот эффект выполнится, только если задан параметр url=true компонента.
+
+    Если открыта ссылка с заданным параметром rid (id онлайн-гонки), то
+    загружаем и отображаем сразу все лог-файлы этой гонки, иначе загружаем 
+    список всех доступных пользователю файлов, оставляя возможность выбора
+    из списка.
+    */
 
     useEffect(() => {
         const downloadFileList = () => {
@@ -160,6 +167,7 @@ const AddBoat = ({open, setOpen, data, url}) => {
                     helperText={error}
                     value={text}
                 />
+                {/* Список доступных для скачивания файлов */}
                 {url ?
                     <>
                         <List>
@@ -167,13 +175,13 @@ const AddBoat = ({open, setOpen, data, url}) => {
                                 return (
                                     <ListItem style={(idx === chosenUrl) ? {
                                         backgroundColor: "blue"
-                                    } : {backgroundColor: "white"}
+                                    } : { backgroundColor: "white" }
                                     } onClick={() => download(idx)}>
                                         <ListItemAvatar>
                                             <div>{fileUrl.name}</div>
                                         </ListItemAvatar>
                                         <ListItemText primary={fileUrl.title}
-                                                      secondary={fileUrl.description}/>
+                                            secondary={fileUrl.description} />
                                     </ListItem>
                                 )
                             }) : <></>}
@@ -184,13 +192,13 @@ const AddBoat = ({open, setOpen, data, url}) => {
                     <Fab
                         color="primary"
                         className={classes.palette}
-                        style={{backgroundColor: color}}
+                        style={{ backgroundColor: color }}
                         onClick={() => setVisible(!visible)}
                     >
-                        <PaletteIcon/>
+                        <PaletteIcon />
                     </Fab>
                     {visible ?
-                        <div style={{position: 'fixed', marginTop: '10px', zIndex: '1'}}>
+                        <div style={{ position: 'fixed', marginTop: '10px', zIndex: '1' }}>
                             <CirclePicker
                                 color={color}
                                 onChangeComplete={(color) => handleColor(color)}

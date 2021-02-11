@@ -2,11 +2,14 @@ import React, {useRef, useState} from 'react'
 import { useStoreState } from 'easy-peasy'
 import AddIcon from '@material-ui/icons/Add'
 import { Fab } from '@material-ui/core'
-import { handleProcessData } from '../../misc/handlers'
 
-import ShowError from '../../misc/showerror'
-import AddBoat from '../../misc/addboat'
 
+import ShowError from '../modals/show_error'
+import AddBoat from '../modals/add_boat'
+
+/*
+* Fab-кнопка для отображения модального диалога выбора лог-файла (с сервера)
+*/
 export const AddUriLog = () => {
     const { classes } = useStoreState(state => state.classes)
     const inputFile = useRef(null)
@@ -25,7 +28,7 @@ export const AddUriLog = () => {
     }
 
     return (
-        <>
+        <>{/* AddBoat загружается с url=true */}
             <AddBoat open={open} setOpen={setOpen} data={data} url={true} setData={setData} />
             <ShowError showError={errorFile} setShowError={setErrorFile} />
             <Fab

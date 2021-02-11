@@ -1,5 +1,5 @@
 import React from 'react'
-import {useStoreActions, useStoreState} from 'easy-peasy'
+import { useStoreActions, useStoreState } from 'easy-peasy'
 import {
     Table,
     TableHead,
@@ -7,31 +7,31 @@ import {
     TableBody,
     TableCell, Checkbox, Typography,
 } from '@material-ui/core'
-import {ColorPicker} from 'material-ui-color'
+import { ColorPicker } from 'material-ui-color'
 import LinearProgress from "@material-ui/core/LinearProgress";
-import {AllOnTime} from "../../misc/timeservice";
+import { AllOnTime } from "../../misc/timeservice";
 
 const defaultHeaders = ["#", "Имя лодки", "Цвет"]
 
-export default function Boats() {
-    const {boats, loadingFiles, progress} = useStoreState(state => state.boats)
-    const {currentTime, needToSliceRoute} = useStoreState(state => state.boats)
-    const {selectedHeaders, headers} = useStoreState(state => state.headers)
-    const {classes} = useStoreState(state => state.classes)
+/*
+* Компонент таблицы с данными лодок в данный момент времени на плеере.
+*/
 
-    const {setCenter, updateBoatColor} = useStoreActions(actions => actions.boats)
-    const {setNeedToSliceRoute} = useStoreActions(actions => actions.boats)
+export default function Boats() {
+    const { boats, loadingFiles, progress } = useStoreState(state => state.boats)
+    const { currentTime, needToSliceRoute } = useStoreState(state => state.boats)
+    const { selectedHeaders, headers } = useStoreState(state => state.headers)
+    const { classes } = useStoreState(state => state.classes)
+
+    const { setCenter, updateBoatColor } = useStoreActions(actions => actions.boats)
+    const { setNeedToSliceRoute } = useStoreActions(actions => actions.boats)
 
     const handleChangeBoat = (e) => {
         const id = e.currentTarget.id
         setCenter(boats[id].coords[0])
     }
 
-    // const handleColor = (id, color) => {
-    //     const nBoat = boats[id]
-    //     nBoat.color = color.hex
-    //     updateBoat({id: id, boat: nBoat})
-    // }
+
 
     const handleCheckbox = (e) => {
         setNeedToSliceRoute(e.target.checked)
@@ -42,12 +42,12 @@ export default function Boats() {
 
     return (
         <> {
-            (loadingFiles) ? <LinearProgress variant="determinate" value={progress}/> : <> </>}
+            (loadingFiles) ? <LinearProgress variant="determinate" value={progress} /> : <> </>}
             <Typography component="h4">
                 Укорачивать след от лодки
-                <Checkbox checked={needToSliceRoute} onChange={handleCheckbox}/>
+                <Checkbox checked={needToSliceRoute} onChange={handleCheckbox} />
             </Typography>
-            <Table size="small" style={{overflow: "hidden", width: '100%н'}}>
+            <Table size="small" style={{ overflow: "hidden", width: '100%н' }}>
                 <>
                     <TableHead>
                         <TableRow>
@@ -59,19 +59,23 @@ export default function Boats() {
                     </TableHead>
                     <TableBody>
                         {boats.map((boat, idx) => (
-                            <TableRow className={classes.tableRow} style={{overflow: 'hidden'}} hover={true}
-                                      key={idx} onClick={handleChangeBoat}
-                                      id={idx}>
+                            <TableRow className={classes.tableRow} style={{ overflow: 'hidden' }} hover={true}
+                                key={idx} onClick={handleChangeBoat}
+                                id={idx}>
                                 <TableCell>{boats.indexOf(boat) + 1}</TableCell>
                                 <TableCell>{boat.name}</TableCell>
                                 <TableCell>
                                     <ColorPicker value={boat.color} hideTextfield disableAlpha
-                                    onChange={(color) => {
-                                        updateBoatColor({id: idx, color: color})
-                                        //alert(boat.color)
-                                    }}/>
+                                        onChange={(color) => {
+                                            updateBoatColor({ id: idx, color: color })
+
+                                        }} />
                                 </TableCell>
 
+                                {/* Фильтруем для отображения в таблице данные, которые по номерам 
+                                столбцов соответствуют выбранным пользователем. Отступ в 4 позиции
+                                необходим, т.к. первые 4 столбца это время, которое в таблице не 
+                                отображается  */}
                                 {(AllOnTime(boat, currentTime)) ?
                                     Object.values(AllOnTime(boat, currentTime)).slice(4).filter((_, idex) => {
                                         return selectedHeaders.includes(headers[idex])

@@ -4,8 +4,12 @@ import AddIcon from '@material-ui/icons/Add'
 import { Fab } from '@material-ui/core'
 import { handleProcessData } from '../../misc/handlers'
 
-import ShowError from '../../misc/showerror'
-import AddBoat from '../../misc/addboat'
+import ShowError from '../modals/show_error'
+import AddBoat from '../modals/add_boat'
+
+/*
+* Fab-кнопка для отображения модального диалога выбора лог-файла (локально)
+*/
 
 export const AddFile = () => {
   const { classes } = useStoreState(state => state.classes)
@@ -40,6 +44,7 @@ export const AddFile = () => {
 
   return (
   <>
+  {/* Файл загружается в input, процессится handleChange и отправляется в компонент AddBoat */}
   <AddBoat open={open} setOpen={setOpen} data={data}  url={false}/>
   <ShowError showError={errorFile} setShowError={setErrorFile} />
   <input

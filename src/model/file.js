@@ -1,5 +1,9 @@
 import { action } from 'easy-peasy';
 
+/*
+* Файл, загруженный пользователем локально.
+*/
+
 export default {
     fileName: "",
     setFileName: action((state, payload) => {

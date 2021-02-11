@@ -1,20 +1,20 @@
 import React, {
     useState
-} from 'react';
+} from 'react'
 import {
     Fade,
     IconButton,
     Typography,
     Slider,
-    MenuItem, TextField, makeStyles
-} from '@material-ui/core';
+   
+} from '@material-ui/core'
 import {
     useStoreState
 } from 'easy-peasy'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import StopIcon from '@material-ui/icons/Stop'
 import { options, formatNumberToHHMMSS } from '../../misc/handlers'
-import CustomizedInputs from "./darkTextField";
+import CustomizedInputs from "./dark_text_field"
 
 
 const Player = ({visible, currentTime, endTime, isPlaying, setPlaying, setDelay, handleUpdateTime, startTime}) => {

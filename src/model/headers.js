@@ -1,4 +1,7 @@
 import {action} from 'easy-peasy'
+/*
+* Заголовки таблицы (отображаемые поля)
+*/
 
 export default {
     headers: [],

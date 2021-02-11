@@ -1,10 +1,14 @@
 import React, {useCallback, useState} from 'react'
 import AddIcon from '@material-ui/icons/Add'
 import { Fab } from '@material-ui/core'
-import {useStyles} from "../../styles/styles";
-import SelectHeaders from '../../misc/selectHeaders'
+import {useStyles} from "../../styles/styles"
+import Bouys from "../map/bouys"
 
-export const ChangeHeaders = () => {
+/*
+* Fab-кнопка для редактирования буев
+*/
+
+export const ChangeBouysFab = () => {
 
     const classes = useStyles()
 
@@ -16,7 +20,7 @@ export const ChangeHeaders = () => {
 
     return (
         <>
-            <SelectHeaders open={open} setOpen={setOpen}/>
+            <Bouys open={open} setOpen={setOpen}/>
             <Fab
                 onClick={handleClick}
                 variant="extended"
@@ -25,10 +29,10 @@ export const ChangeHeaders = () => {
                 className={classes.fab}
             >
                 <AddIcon className={classes.extendedIcon}/>
-                Изменить заголовки
+                Отобразить буи
             </Fab>
         </>
     )
 }
 
-export default ChangeHeaders
+export default ChangeBouysFab

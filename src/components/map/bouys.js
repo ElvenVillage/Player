@@ -12,6 +12,10 @@ import {
 import CheckIcon from '@material-ui/icons/Check'
 import {useStoreActions, useStoreState} from "easy-peasy";
 
+/*
+* Модальное окно для выбора буев при отображении на карте. Буи хранятся в 
+* localStorage (см. модель)
+*/
 
 const Bouys = ({ open, setOpen }) => {
 

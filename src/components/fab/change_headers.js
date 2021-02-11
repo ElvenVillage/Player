@@ -1,10 +1,15 @@
 import React, {useCallback, useState} from 'react'
 import AddIcon from '@material-ui/icons/Add'
 import { Fab } from '@material-ui/core'
-import {useStyles} from "../styles/styles";
-import Bouys from "../components/Map/bouys";
+import {useStyles} from "../../styles/styles";
+import SelectHeaders from '../modals/select_headers'
 
-export const ChangeBouysFab = () => {
+/*
+* Fab-кнопка для вызова модального окна выбора параметров для отображения
+* (заголовков таблицы boats.js)
+*/
+
+export const ChangeHeaders = () => {
 
     const classes = useStyles()
 
@@ -16,7 +21,7 @@ export const ChangeBouysFab = () => {
 
     return (
         <>
-            <Bouys open={open} setOpen={setOpen}/>
+            <SelectHeaders open={open} setOpen={setOpen}/>
             <Fab
                 onClick={handleClick}
                 variant="extended"
@@ -25,10 +30,10 @@ export const ChangeBouysFab = () => {
                 className={classes.fab}
             >
                 <AddIcon className={classes.extendedIcon}/>
-                Отобразить буи
+                Изменить заголовки
             </Fab>
         </>
     )
 }
 
-export default ChangeBouysFab
+export default ChangeHeaders

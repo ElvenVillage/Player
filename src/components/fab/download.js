@@ -4,6 +4,11 @@ import SaveIcon from '@material-ui/icons/Save';
 import Papa from 'papaparse';
 import {Fab} from '@material-ui/core';
 
+/*
+* Fab-кнопка скачивания открытого файла (все открытые логи соединяются 
+* в единый excel-файл)
+*/
+
 export const Download = () => {
     const { boats } = useStoreState(state => state.boats);
     const { fileName } = useStoreState(state => state.file);

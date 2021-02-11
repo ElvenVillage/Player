@@ -1,5 +1,9 @@
 import {action} from 'easy-peasy';
 
+/*
+* Параметры буев сохраняются в localStorage
+*/
+
 export default {
     bouys: [],
     polyline: [],
